@@ -1,6 +1,6 @@
-// WINLAND — HOME HÍBRIDO (prototipo, réplica del design system de producción)
-// Header/footer/bottom-nav: HTML real de producción. Página pre-renderizada
-// (SSG/static export, igual que producción) con metas, OG y JSON-LD server-side.
+// WINLAND — HOME HÍBRIDO (prototipo del home multi-vertical)
+// Header/footer/bottom-nav: marcado del chrome del sitio. Página pre-renderizada
+// (SSG/static export) con metas, OG y JSON-LD server-side.
 import Head from 'next/head';
 import { useEffect } from 'react';
 import { useScrollProgressVar } from '../lib/hooks';

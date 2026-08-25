@@ -1,4 +1,4 @@
-// Header, Footer y BottomNav — HTML real de producción, renderizado tal cual.
+// Header, Footer y BottomNav — marcado del chrome del sitio, renderizado tal cual.
 // Todos los enlaces están neutralizados a "#" (ver lib/frags.js).
 import { useCallback, useEffect, useState } from 'react';
 import { headerHTML, footerHTML, bottomNavHTML } from '../lib/frags';

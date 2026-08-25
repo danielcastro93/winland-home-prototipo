@@ -1,4 +1,4 @@
-// Chat de soporte — réplica del launcher flotante de producción (Zendesk `#launcher`,
+// Chat de soporte — launcher flotante (placeholder de Zendesk `#launcher`,
 // burbuja circular abajo-izquierda). En prod, el ítem "Hablar con un agente" del menú
 // abre este mismo widget; como el widget es GLOBAL y flotante, en el home vive igual
 // sin necesidad del menú hamburguesa. En integración: cargar el script de Zendesk y
