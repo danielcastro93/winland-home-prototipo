@@ -73,14 +73,16 @@ nextjs-portal, #__next-dev-tools-indicator, [data-next-badge-root], [data-nextjs
 
 /* ---------- SPACE GROTESK: titulares, header, CTAs y títulos del footer; cuerpo en Denim ----------
    !important: la CSS de producción fuerza font-family winland !important en headings */
-.wl-h2, .wl-h888__title { font-family: 'Sora', var(--clmc-font, winland), system-ui, sans-serif !important; font-weight: 600 !important; letter-spacing: 0.005em; }
-.clmc-main-menu-link { font-family: 'Sora', var(--clmc-font, winland), system-ui, sans-serif !important; font-weight: 500; }
+.wl-h2, .wl-h888__title { font-family: 'Sora', var(--clmc-font, winland), system-ui, sans-serif !important; letter-spacing: 0.005em; }
+.wl-h888__title { font-weight: 600 !important; }  /* H1: 600 */
+.wl-h2 { font-weight: 500 !important; }            /* H2: 500 */
+.clmc-main-menu-link { font-family: 'Sora', var(--clmc-font, winland), system-ui, sans-serif !important; font-weight: 500; font-size: 15px !important; }
 /* botones del header (Ingresar / Regístrate, viven en .anonymous-appBar) */
-.anonymous-appBar button, .anonymous-appBar a { font-family: 'Sora', var(--clmc-font, winland), system-ui, sans-serif !important; }
+.anonymous-appBar button, .anonymous-appBar a { font-family: 'Sora', var(--clmc-font, winland), system-ui, sans-serif !important; font-weight: 500 !important; font-size: 14px !important; }
 /* CTAs de la propuesta: botones (Girar, Jugar ahora, Entrar…) con el MISMO peso que
    Ingresar/Regístrate del header (600), y see-alls (Ver todo el casino, Todos los deportes…) */
-.wl-btn { font-family: 'Sora', var(--clmc-font, winland), system-ui, sans-serif !important; font-weight: 600 !important; }
-.wl-see-all { font-family: 'Sora', var(--clmc-font, winland), system-ui, sans-serif !important; font-weight: 600 !important; }
+.wl-btn { font-family: 'Sora', var(--clmc-font, winland), system-ui, sans-serif !important; font-weight: 500 !important; }
+.wl-see-all { font-family: 'Sora', var(--clmc-font, winland), system-ui, sans-serif !important; font-weight: 500 !important; }
 /* títulos del footer (¿Necesitas ayuda?, Legales, Ajustes, Más información sobre Winland) */
 .clmc-footer-title, .clmc-footer h3, .clmc-footer h4 { font-family: 'Sora', var(--clmc-font, winland), system-ui, sans-serif !important; }
 
@@ -232,7 +234,7 @@ a { color: inherit; text-decoration: none; }
   color: var(--wl-grey); font-weight: 700;
 }
 .wl-kicker::before { content: ""; width: 22px; height: 2px; background: var(--wl-orange); display: inline-block; }
-.wl-h2 { font-size: clamp(22px, 4vw, 33px); line-height: 1.1; font-weight: 800; margin: 10px 0 6px; }
+.wl-h2 { font-size: clamp(20px, 4vw, 28px); line-height: 1.12; font-weight: 800; margin: 10px 0 6px; }
 .wl-sub { color: var(--wl-grey); font-size: var(--clmc-text-medium, 16px); margin: 0 0 22px; max-width: 640px; }
 
 /* ---------- botones (mismos colores/pesos clmc) ---------- */
@@ -240,7 +242,7 @@ a { color: inherit; text-decoration: none; }
   display: inline-flex; align-items: center; justify-content: center; gap: 8px;
   border: 0; cursor: pointer;
   border-radius: var(--wl-radius-s);
-  font-weight: 700; font-size: var(--clmc-text-medium, 16px);
+  font-weight: 700; font-size: 14px;
   padding: 12px 24px;
   transition: transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.2s, box-shadow 0.2s;
 }
@@ -265,7 +267,7 @@ a { color: inherit; text-decoration: none; }
 /* alineado al margen del header (mismo padding grande, 32px), a lo ancho: en monitores grandes el texto va pegado al margen del menu y el arte llena todo */
 .wl-h888__inner { width: 100%; padding: 0 90px; }
 .wl-h888__text { max-width: 460px; }
-.wl-h888__title { font-size: clamp(24px, 3.3vw, 42px); line-height: 1.07; font-weight: 800; margin: 0 0 12px; letter-spacing: -0.01em; }
+.wl-h888__title { font-size: clamp(24px, 3.3vw, 40px); line-height: 1.07; font-weight: 800; margin: 0 0 12px; letter-spacing: -0.01em; }
 .wl-h888__sub { color: #e6e6e6; font-size: clamp(15px, 1.7vw, 18px); line-height: 1.45; margin: 0 0 22px; max-width: 400px; }
 .wl-h888__ctas { display: flex; gap: 12px; flex-wrap: wrap; }
 
@@ -301,7 +303,7 @@ a { color: inherit; text-decoration: none; }
   .wl-h888__content { position: static; display: block; padding: 16px 16px 4px; background: #0a0a0a; }
   .wl-h888__inner { padding: 0; }
   .wl-h888__text { max-width: 100%; }
-  .wl-h888__title { font-size: clamp(20px, 5.4vw, 28px); }
+  .wl-h888__title { font-size: clamp(24px, 6.4vw, 28px); }
   .wl-h888__sub { max-width: 100%; }
   .wl-hero888 .splide__arrow { display: none; }
   /* CTAs al 50/50: uno solo llena el ancho, dos se reparten mitad y mitad */
@@ -587,7 +589,7 @@ a { color: inherit; text-decoration: none; }
   font-size: var(--clmc-text-xsmall, 12px); font-weight: 700;
   border-radius: 999px; padding: 2px 10px;
 }
-.wl-see-all { font-size: var(--clmc-text-small, 14px); font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; display: inline-flex; align-items: center; gap: 6px; }
+.wl-see-all { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; display: inline-flex; align-items: center; gap: 6px; }
 .wl-see-all:hover { color: var(--wl-orange-soft); }
 
 .wl-machine { position: relative; border-radius: var(--wl-radius-s); }
