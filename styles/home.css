@@ -1,0 +1,1105 @@
+/* ============================================================
+   WINLAND HOME HÍBRIDO — capa de propuesta (namespace wl-)
+   El look & feel base viene del CSS REAL de producción
+   (/prod/winland-prod.css + /prod/emotion.css). Aquí solo viven
+   los componentes nuevos del home. Nada compite con clmc-.
+   Solo transform/opacity en animaciones; prefers-reduced-motion
+   respetado. Mobile-first.
+   ============================================================ */
+
+:root {
+  --wl-orange: var(--clmc-color-primary, #e85b10);
+  --wl-orange-soft: #ff8a3d;
+  --wl-grey: var(--clmc-color-quinary, #adadad);
+  --wl-gold: #f5b642;
+  --wl-radius-s: var(--clmc-border-radius-small, 8px);
+  --wl-radius-l: var(--clmc-border-radius-large, 12px);
+}
+
+html, body { margin: 0; padding: 0; background: #000; }
+/* ocultar el indicador "N" de dev de Next (para la presentación) */
+nextjs-portal, #__next-dev-tools-indicator, [data-next-badge-root], [data-nextjs-dev-tools-button], [data-next-badge] { display: none !important; }
+
+/* ---------- POPUP promocional (imagen fija de /assets/popup/) ---------- */
+/* z-index 2000: por ENCIMA del header de producción (MuiAppBar, z-index 1100) y del
+   bottom-nav, para que el popup tape TODOS los elementos. Overlay con blur. */
+.wl-popup {
+  position: fixed; inset: 0; z-index: 2000;
+  display: flex; align-items: center; justify-content: center; padding: 20px;
+  background: rgba(8, 6, 4, 0.72);
+  backdrop-filter: blur(10px);
+  opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
+}
+.wl-popup--in { opacity: 1; pointer-events: auto; }
+.wl-popup__box {
+  position: relative; max-width: min(430px, 92vw);
+  transform: translateY(18px) scale(0.96); opacity: 0;
+  transition: transform 0.45s cubic-bezier(0.16,1,0.3,1), opacity 0.35s ease;
+}
+.wl-popup--in .wl-popup__box { transform: none; opacity: 1; }
+.wl-popup__box {
+  border-radius: 18px; overflow: hidden;
+  box-shadow: 0 40px 90px rgba(0,0,0,0.6);
+}
+.wl-popup__img {
+  display: block; width: 100%; max-height: 76vh; object-fit: cover;
+}
+/* CTA en HTML sobre el arte, integrado con un degradado (medible y editable) */
+.wl-popup__cta {
+  position: absolute; left: 0; right: 0; bottom: 0; z-index: 2;
+  padding: 46px 18px 18px; text-align: center;
+  background: linear-gradient(180deg, transparent, rgba(6,5,4,0.86) 42%, #060504 100%);
+}
+.wl-popup__btn {
+  width: 100%; max-width: 300px; padding: 14px 22px; font-size: 16px;
+  box-shadow: 0 12px 30px rgba(232, 91, 16, 0.45);
+  animation: wl-popup-cta 2.8s ease-in-out infinite;
+}
+@keyframes wl-popup-cta {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+@media (prefers-reduced-motion: reduce) { .wl-popup__btn { animation: none; } }
+.wl-popup__legal { margin: 10px 0 0; font-size: 11px; color: rgba(255,255,255,0.6); }
+/* dentro de la caja (la caja recorta con overflow:hidden, fuera se cortaba) */
+.wl-popup__close {
+  position: absolute; top: 12px; right: 12px; z-index: 3;
+  width: 34px; height: 34px; border-radius: 50%; border: 0; cursor: pointer;
+  background: #fff; color: #14100c; display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.45); transition: transform 0.15s, background 0.15s, color 0.15s;
+}
+.wl-popup__close:hover { background: var(--wl-orange); color: #fff; transform: scale(1.08); }
+@media (max-width: 620px) { .wl-popup__close { top: 10px; right: 10px; } }
+
+/* ---------- SPACE GROTESK: titulares, header, CTAs y títulos del footer; cuerpo en Denim ----------
+   !important: la CSS de producción fuerza font-family winland !important en headings */
+.wl-h2, .wl-h888__title { font-family: 'Sora', var(--clmc-font, winland), system-ui, sans-serif !important; font-weight: 600 !important; letter-spacing: 0.005em; }
+.clmc-main-menu-link { font-family: 'Sora', var(--clmc-font, winland), system-ui, sans-serif !important; font-weight: 500; }
+/* botones del header (Ingresar / Regístrate, viven en .anonymous-appBar) */
+.anonymous-appBar button, .anonymous-appBar a { font-family: 'Sora', var(--clmc-font, winland), system-ui, sans-serif !important; }
+/* CTAs de la propuesta: botones (Girar, Jugar ahora, Entrar…) con el MISMO peso que
+   Ingresar/Regístrate del header (600), y see-alls (Ver todo el casino, Todos los deportes…) */
+.wl-btn { font-family: 'Sora', var(--clmc-font, winland), system-ui, sans-serif !important; font-weight: 600 !important; }
+.wl-see-all { font-family: 'Sora', var(--clmc-font, winland), system-ui, sans-serif !important; font-weight: 600 !important; }
+/* títulos del footer (¿Necesitas ayuda?, Legales, Ajustes, Más información sobre Winland) */
+.clmc-footer-title, .clmc-footer h3, .clmc-footer h4 { font-family: 'Sora', var(--clmc-font, winland), system-ui, sans-serif !important; }
+
+/* ---------- CHAT flotante — placeholder del launcher REAL de producción ----------
+   En prod el chat es el widget global de Zendesk (iframe #launcher, burbuja flotante
+   abajo-izquierda); el ítem "Hablar con un agente" del menú solo lo abre. EN
+   INTEGRACIÓN: cargar el script de Zendesk en el home y ELIMINAR este placeholder
+   (el widget pinta su propia burbuja en esta misma posición). */
+.wl-chat {
+  position: fixed; left: 16px; bottom: 16px; z-index: 900;
+  display: flex; align-items: center; gap: 10px;
+  background: none; border: 0; cursor: pointer; padding: 0;
+}
+/* MISMO avatar que producción: círculo --clmc-bg-tertiary (#e85b10) 45px,
+   ícono de persona blanco (--clmc-color-secondary) y punto verde abajo-derecha. */
+.wl-chat__bubble {
+  position: relative; width: 45px; height: 45px; border-radius: 50%;
+  background: var(--clmc-bg-tertiary, #e85b10);
+  color: var(--clmc-color-secondary, #fff);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.45);
+  display: flex; align-items: center; justify-content: center;
+  transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.2s;
+  order: 1;
+}
+.wl-chat__bubble svg { width: 26px; height: 26px; display: block; }
+/* punto "disponible" — mismos valores que .clmc-status-avatar de producción */
+.wl-chat__status {
+  position: absolute; bottom: 0; right: 0;
+  width: 12px; height: 12px; border-radius: 50%;
+  background-color: #22c55e; border: 2px solid #111;
+}
+/* anillo de pulso sutil que invita al clic */
+.wl-chat__bubble::before {
+  content: ""; position: absolute; inset: -4px; border-radius: 50%;
+  border: 2px solid rgba(232, 91, 16, 0.5);
+  animation: wl-chat-pulse 2.6s ease-out infinite;
+}
+@keyframes wl-chat-pulse {
+  0% { transform: scale(0.9); opacity: 0.9; }
+  70%, 100% { transform: scale(1.35); opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) { .wl-chat__bubble::before { animation: none; opacity: 0; } }
+.wl-chat:hover .wl-chat__bubble { transform: scale(1.09); box-shadow: 0 14px 32px rgba(232, 91, 16, 0.55); }
+.wl-chat__label {
+  order: 2; opacity: 0; transform: translateX(-6px); pointer-events: none;
+  background: #fff; color: #14100c; font-size: 13px; font-weight: 500;
+  border-radius: 999px; padding: 8px 14px; white-space: nowrap;
+  box-shadow: 0 8px 22px rgba(0,0,0,0.4);
+  transition: opacity 0.2s ease, transform 0.25s cubic-bezier(0.16,1,0.3,1);
+}
+.wl-chat:hover .wl-chat__label { opacity: 1; transform: none; }
+/* mobile: el footer reserva espacio para que los legales nunca queden bajo la burbuja */
+@media (max-width: 899px) { .clmc-footer { padding-bottom: 92px; } }
+/* mobile: por encima del bottom-nav y con aire extra para no tapar los legales */
+@media (max-width: 899px) { .wl-chat { bottom: 108px; } .wl-chat__bubble { width: 42px; height: 42px; } .wl-chat__bubble svg { width: 24px; height: 24px; } .wl-chat__label { display: none; } }
+
+/* ---------- CUPÓN (simulación de la barra del betslip de Altenar) ----------
+   Oculto de inicio; aparece al tocar una cuota. Ver BetSlip.jsx para la nota de
+   integración (aquí va el WBetslipOverlay real del WSDK). */
+.wl-betslip {
+  position: fixed; right: 16px; bottom: 12px; z-index: 890; width: 400px; max-width: calc(100vw - 32px);
+  animation: wl-betslip-in 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+}
+@keyframes wl-betslip-in { from { transform: translateY(120%); opacity: 0; } to { transform: none; opacity: 1; } }
+.wl-betslip__bar {
+  height: 44px; border-radius: 12px;
+  background: #e95c0f; color: #fff;
+  display: flex; align-items: center; justify-content: space-between; padding: 0 16px;
+  font-size: 14px; letter-spacing: 0.03em;
+  box-shadow: 0 12px 34px rgba(0,0,0,0.5);
+}
+.wl-betslip__left { display: inline-flex; align-items: center; gap: 8px; font-weight: 800; }
+.wl-betslip__count {
+  width: 20px; height: 20px; border-radius: 50%;
+  background: #fff; color: #17110c; font-size: 12px; font-weight: 800;
+  display: inline-flex; align-items: center; justify-content: center;
+}
+.wl-betslip__right { display: inline-flex; align-items: center; gap: 7px; font-weight: 500; }
+.wl-betslip__right b { font-weight: 800; }
+/* solo desktop: en mobile el acceso es "Mis apuestas" del bottom-nav (como prod) */
+@media (max-width: 899px) { .wl-betslip { display: none; } }
+
+/* cuota seleccionada (cae al cupón) */
+.wl-ev__odd--on { background: var(--wl-orange) !important; border-color: var(--wl-orange) !important; }
+.wl-ev__odd--on b, .wl-ev__odd--on span { color: #fff !important; }
+body { font-family: var(--clmc-font, winland), system-ui, sans-serif; color: #fff; }
+h1, h2, h3, h4, p, button, input, select { font-family: inherit; }
+* { box-sizing: border-box; }
+img { max-width: 100%; }
+a { color: inherit; text-decoration: none; }
+
+/* ---------- fondo atmosférico sutil ---------- */
+.wl-membrane { position: fixed; inset: 0; z-index: -1; background: #000; overflow: hidden; pointer-events: none; }
+.wl-membrane__blob {
+  position: absolute; left: -30vmax; top: -35vmax;
+  width: 85vmax; height: 85vmax; border-radius: 50%;
+  filter: blur(80px);
+  background: radial-gradient(circle at 35% 35%, rgba(232, 91, 16, 0.20), rgba(137, 77, 32, 0.06) 55%, transparent 70%);
+  animation: wl-drift 34s ease-in-out infinite alternate;
+  will-change: transform;
+}
+@keyframes wl-drift {
+  from { transform: translate3d(0, 0, 0) scale(1); }
+  to   { transform: translate3d(7vmax, 5vmax, 0) scale(1.08); }
+}
+
+/* ---------- layout ---------- */
+.wl-main { padding-top: var(--clmc-header-height, 60px); overflow-x: clip; }
+/* En el HOME no aplica el menú hamburguesa (solo dentro de las verticales); el logo se queda */
+.clmc-img-header-menu-casino { display: none !important; }
+/* REGLA GLOBAL: las flechas de TODOS los carruseles están ocultas y solo aparecen al
+   pasar el cursor por encima del carrusel (mismo comportamiento que el hero). */
+.wl-top10__slider .splide__arrow,
+.wl-match-slider .splide__arrow,
+.wl-promo-slider .splide__arrow { opacity: 0 !important; pointer-events: none; transition: opacity 0.2s ease; }
+/* al hover aparecen SOLO las flechas con contenido de ese lado (Splide pone [disabled]
+   en la flecha del extremo: al inicio no hay "regresar", al final no hay "avanzar"). */
+.wl-top10__slider:hover .splide__arrow:not([disabled]),
+.wl-match-slider:hover .splide__arrow:not([disabled]),
+.wl-promo-slider:hover .splide__arrow:not([disabled]) { opacity: 1 !important; pointer-events: auto; }
+.wl-section { position: relative; padding: 40px 16px; max-width: 1280px; margin: 0 auto; }
+@media (min-width: 900px) { .wl-section { padding: 56px 32px; } }
+
+/* reveal cinematográfico: entra con leve escala + desenfoque (one-shot, GPU) */
+.wl-reveal { opacity: 0; transform: translateY(26px) scale(0.985); filter: blur(5px); transition: opacity 0.7s ease, transform 0.7s cubic-bezier(0.16, 1, 0.3, 1), filter 0.7s ease; }
+.wl-inview .wl-reveal { opacity: 1; transform: none; filter: none; }
+.wl-inview .wl-reveal--d1 { transition-delay: 0.08s; }
+.wl-inview .wl-reveal--d2 { transition-delay: 0.16s; }
+.wl-inview .wl-reveal--d3 { transition-delay: 0.24s; }
+
+/* ---------- CAPA DE VIDA AL SCROLL (parallax de decoración, usa --wl-scroll 0..1) ----------
+   Solo transform en capas decorativas (sin animación propia de transform), tier GPU. */
+@media (prefers-reduced-motion: no-preference) {
+  .wl-membrane { transform: translate3d(0, calc(var(--wl-scroll, 0) * -5vh), 0); }
+  .wl-live-decor { transform: translate3d(0, calc((var(--wl-scroll, 0) - 0.62) * 9vh), 0); }
+  .wl-picker__inner::after {
+    content: ""; position: absolute; top: -30%; right: -8%;
+    width: 300px; height: 300px; border-radius: 50%; pointer-events: none;
+    background: radial-gradient(circle, rgba(232, 91, 16, 0.18), transparent 65%);
+    transform: translate3d(0, calc((var(--wl-scroll, 0) - 0.5) * 14vh), 0);
+    filter: blur(20px);
+  }
+}
+
+.wl-kicker {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: var(--clmc-text-xsmall, 12px);
+  letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--wl-grey); font-weight: 700;
+}
+.wl-kicker::before { content: ""; width: 22px; height: 2px; background: var(--wl-orange); display: inline-block; }
+.wl-h2 { font-size: clamp(22px, 4vw, 33px); line-height: 1.1; font-weight: 800; margin: 10px 0 6px; }
+.wl-sub { color: var(--wl-grey); font-size: var(--clmc-text-medium, 16px); margin: 0 0 22px; max-width: 640px; }
+
+/* ---------- botones (mismos colores/pesos clmc) ---------- */
+.wl-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  border: 0; cursor: pointer;
+  border-radius: var(--wl-radius-s);
+  font-weight: 700; font-size: var(--clmc-text-medium, 16px);
+  padding: 12px 24px;
+  transition: transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.2s, box-shadow 0.2s;
+}
+.wl-btn:active { transform: scale(0.95); }
+.wl-btn--primary { background: var(--clmc-btn-color-primary, #e85b10); color: #fff; }
+.wl-btn--primary:hover { background: var(--clmc-btn-color-primary-hover, #f16012); }
+.wl-btn--white { background: #fff; color: var(--wl-orange); }
+.wl-btn--white:hover { background: var(--clmc-btn-color-tertiary-hover, #f0fff0); }
+.wl-btn--ghost { background: transparent; color: #fff; border: 1px solid rgba(255,255,255,0.35); }
+.wl-btn--ghost:hover { border-color: #fff; }
+
+/* ---------- HERO estilo 888.com: banner full-bleed (imagen o video) ---------- */
+.wl-hero888 { position: relative; width: 100%; background: #000; }
+.wl-h888 { position: relative; width: 100%; height: min(31.25vw, 600px); overflow: hidden; }  /* full-width real; alto ~1920:600 topado a 640 (no encoge el ancho como aspect-ratio) */
+.wl-h888__media { position: absolute; inset: 0; }
+.wl-h888__bg { width: 100%; height: 100%; object-fit: cover; object-position: 85% center; display: block; }
+.wl-h888__scrim {
+  position: absolute; inset: 0; z-index: 1;
+  background: linear-gradient(90deg, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.66) 24%, rgba(0,0,0,0.12) 50%, transparent 64%);
+}
+.wl-h888__content { position: absolute; inset: 0; display: flex; align-items: center; z-index: 2; }
+/* alineado al margen del header (mismo padding grande, 32px), a lo ancho: en monitores grandes el texto va pegado al margen del menu y el arte llena todo */
+.wl-h888__inner { width: 100%; padding: 0 90px; }
+.wl-h888__text { max-width: 460px; }
+.wl-h888__title { font-size: clamp(24px, 3.3vw, 42px); line-height: 1.07; font-weight: 800; margin: 0 0 12px; letter-spacing: -0.01em; }
+.wl-h888__sub { color: #e6e6e6; font-size: clamp(15px, 1.7vw, 18px); line-height: 1.45; margin: 0 0 22px; max-width: 400px; }
+.wl-h888__ctas { display: flex; gap: 12px; flex-wrap: wrap; }
+
+/* flechas: alineadas al margen del header (32px) y visibles SOLO al hover (desktop) */
+.wl-hero888 .splide__arrow { background: rgba(0,0,0,0.5); width: 42px; height: 42px; opacity: 0 !important; transition: opacity 0.25s ease, background 0.2s; }
+/* aparecen SOLO cuando el cursor esta sobre la imagen/video (clase por JS, geometria del track) */
+.wl-hero888.wl-show-arrows .splide__arrow { opacity: 1 !important; }
+.wl-hero888 .splide__arrow:hover { background: rgba(0,0,0,0.82); }
+.wl-hero888 .splide__arrow svg { fill: #fff; width: 15px; height: 15px; }
+.wl-hero888 .splide__arrow--prev { left: 32px; }
+.wl-hero888 .splide__arrow--next { right: 32px; }
+.wl-hero888 .splide__arrow[disabled] { opacity: 0 !important; }
+
+/* bullets ovalados (estilo casino) con RELLENO de progreso del autoplay, debajo con espaciado */
+.wl-hero888 .splide__pagination { position: static; display: flex; justify-content: center; gap: 8px; padding: 16px 0 4px; margin: 0; }
+.wl-hero888 .splide__pagination__page {
+  position: relative; overflow: hidden; width: 9px; height: 9px; border-radius: 5px; margin: 0;
+  opacity: 1; transform: none; background: rgba(255,255,255,0.32);
+  transition: width 0.3s ease, background 0.3s ease;
+}
+.wl-hero888 .splide__pagination__page.is-active { width: 34px; background: rgba(232, 91, 16, 0.3); }
+.wl-hero888 .splide__pagination__page.is-active::after {
+  content: ""; position: absolute; inset: 0; background: var(--wl-orange);
+  transform: scaleX(var(--wl-fill, 0)); transform-origin: left center;
+}
+
+/* MÓVIL: media como primer bloque, texto+CTA DEBAJO; sin flechas, solo bullets */
+@media (max-width: 760px) {
+  .wl-h888 { height: auto; display: flex; flex-direction: column; }
+  .wl-h888__media { position: relative; inset: auto; width: 100%; aspect-ratio: 16 / 10; }
+  .wl-h888__bg { object-position: 78% center; }
+  .wl-h888__scrim { display: none; }
+  .wl-h888__content { position: static; display: block; padding: 16px 16px 4px; background: #0a0a0a; }
+  .wl-h888__inner { padding: 0; }
+  .wl-h888__text { max-width: 100%; }
+  .wl-h888__title { font-size: clamp(20px, 5.4vw, 28px); }
+  .wl-h888__sub { max-width: 100%; }
+  .wl-hero888 .splide__arrow { display: none; }
+  /* CTAs al 50/50: uno solo llena el ancho, dos se reparten mitad y mitad */
+  .wl-h888__ctas { flex-wrap: nowrap; }
+  .wl-h888__ctas .wl-btn { flex: 1 1 0; min-width: 0; justify-content: center; padding-left: 12px; padding-right: 12px; }
+}
+
+.wl-hero888__below { padding: 0; }
+
+/* accesos rápidos con iconografía real */
+.wl-quick { display: flex; gap: 10px; margin: 16px 16px 0; overflow-x: auto; padding-bottom: 4px; scrollbar-width: none; }
+@media (min-width: 900px) { .wl-quick { margin: 18px 32px 0; } }
+.wl-quick::-webkit-scrollbar { display: none; }
+.wl-quick a {
+  flex: 0 0 auto;
+  display: inline-flex; align-items: center; gap: 8px;
+  background: #111; border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 999px; padding: 10px 18px;
+  font-size: var(--clmc-text-small, 14px); font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em;
+  transition: border-color 0.2s, transform 0.2s;
+}
+.wl-quick a img { width: 20px; height: 20px; display: block; }
+.wl-quick a:hover { border-color: var(--wl-orange); transform: translateY(-2px); }
+
+/* ---------- deportes: CARRUSEL de cards altos con foto (ref. draftea.mx) ---------- */
+.wl-deportes { position: relative; }
+
+.wl-evrow-wrap { position: relative; margin-top: 8px; }
+.wl-evrow {
+  display: flex; gap: 20px; overflow-x: auto; padding: 14px 4px 26px;
+  scrollbar-width: none;
+}
+.wl-evrow::-webkit-scrollbar { display: none; }
+/* cada item: APILADO al centro (translateX --dx) -> se despliega a su lugar en la fila */
+.wl-evrow__item {
+  flex: 0 0 264px; will-change: transform;
+  transform: translateX(var(--dx, 0)) scale(0.9);
+  transition: transform 1.15s cubic-bezier(0.22,1,0.36,1), opacity 0.4s ease;
+}
+.wl-evrow--open .wl-evrow__item { transform: translateX(0) scale(1); }
+/* despliegue escalonado desde el centro hacia afuera */
+.wl-evrow--open .wl-evrow__item:nth-child(1) { transition-delay: 0s; }
+.wl-evrow--open .wl-evrow__item:nth-child(2) { transition-delay: 0.07s; }
+.wl-evrow--open .wl-evrow__item:nth-child(3) { transition-delay: 0.14s; }
+.wl-evrow--open .wl-evrow__item:nth-child(4) { transition-delay: 0.21s; }
+.wl-evrow--open .wl-evrow__item:nth-child(5) { transition-delay: 0.28s; }
+.wl-evrow--open .wl-evrow__item:nth-child(6) { transition-delay: 0.35s; }
+/* HOVER: solo levanta el card (sin atenuar el resto) */
+.wl-evrow .wl-evrow__item:hover { z-index: 5; transition-delay: 0s; }
+.wl-evrow__item:hover .wl-ev { transform: translateY(-10px); box-shadow: 0 28px 56px rgba(0,0,0,0.62); }
+
+/* CARD alta: foto a toda la card + degradado negro abajo + datos encima (sin escudos) */
+.wl-ev {
+  position: relative; width: 100%; height: 358px; border-radius: 16px; overflow: hidden;
+  /* SIN borde: el degradado termina en negro puro y cualquier borde claro se marcaba
+     como una línea. El card se define por la foto arriba y el fundido a negro abajo. */
+  border: 0;
+  background:
+    radial-gradient(80% 55% at 72% 10%, rgba(255,244,206,0.14), transparent 55%),
+    radial-gradient(90% 70% at 18% 6%, rgba(92,168,118,0.16), transparent 60%),
+    linear-gradient(180deg, #1a2a20 0%, #10160f 46%, #0a0b0a 100%);
+  transition: transform 0.32s cubic-bezier(0.16,1,0.3,1), box-shadow 0.32s, border-color 0.32s;
+}
+.wl-ev__photo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center 16%; z-index: 0; }
+.wl-ev__scrim {
+  position: absolute; inset: 0; z-index: 1; pointer-events: none;
+  background: linear-gradient(180deg, rgba(0,0,0,0.45) 0%, rgba(0,0,0,0) 22%, rgba(0,0,0,0) 34%, rgba(0,0,0,0.55) 56%, rgba(0,0,0,0.9) 78%, #000 100%);
+}
+.wl-ev__top {
+  position: absolute; top: 12px; left: 12px; right: 12px; z-index: 2;
+  display: flex; align-items: center; justify-content: space-between; gap: 8px; font-size: 12px;
+}
+.wl-ev__meta { display: flex; align-items: center; gap: 6px; min-width: 0; text-shadow: 0 1px 4px rgba(0,0,0,0.85); }
+.wl-ev__ball { font-size: 13px; line-height: 1; flex-shrink: 0; }
+.wl-ev__date { color: #fff; font-weight: 600; white-space: nowrap; }
+.wl-ev__liga { width: 15px; height: 15px; object-fit: contain; flex-shrink: 0; }
+.wl-ev__ligatxt { color: #eaeaea; white-space: nowrap; }
+.wl-ev__stats { color: #eaeaea; flex-shrink: 0; filter: drop-shadow(0 1px 2px rgba(0,0,0,0.8)); }
+.wl-ev__info { position: absolute; left: 0; right: 0; bottom: 0; z-index: 2; padding: 14px; display: flex; flex-direction: column; gap: 9px; }
+.wl-ev__teams { font-size: 16px; font-weight: 800; color: #fff; text-shadow: 0 1px 5px rgba(0,0,0,0.95); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.wl-ev__vs { color: var(--wl-orange); font-weight: 700; margin: 0 3px; }
+.wl-ev__market { font-size: 12px; color: #cfcfd2; text-shadow: 0 1px 4px rgba(0,0,0,0.9); }
+.wl-ev__odds { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.wl-ev__odd {
+  min-height: 46px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
+  background: rgba(20,20,22,0.82); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px;
+  text-decoration: none; backdrop-filter: blur(3px);
+  transition: background 0.18s, border-color 0.18s, transform 0.14s;
+}
+.wl-ev__odd:hover { background: rgba(43,43,46,0.92); border-color: rgba(232,91,16,0.5); }
+.wl-ev__odd:active { transform: scale(0.97); }
+.wl-ev__odd b { color: #fff; font-size: 15px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.wl-ev__odd span { color: #c7c7cb; font-size: 12px; white-space: nowrap; }
+
+/* flechas del carrusel: ocultas, aparecen al hover; se ocultan en el extremo sin contenido */
+/* MISMA flecha que Top 10 (Splide de producción): círculo blanco translúcido + ícono blanco */
+.wl-evrow__arrow {
+  position: absolute; top: 50%; transform: translateY(-50%); z-index: 6;
+  width: 32px; height: 32px; border-radius: 50%; border: 0; cursor: pointer; color: #fff;
+  background: rgba(255,255,255,0.5); box-shadow: 0 2px 8px rgba(0,0,0,0.28);
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; pointer-events: none; transition: opacity 0.2s ease, background 0.2s;
+}
+.wl-evrow-wrap:hover .wl-evrow__arrow { opacity: 1; pointer-events: auto; }
+.wl-evrow__arrow:hover { background: var(--wl-orange); }
+.wl-evrow__arrow svg { fill: #fff; width: 16px; height: 16px; }
+.wl-evrow__arrow[disabled] { opacity: 0 !important; pointer-events: none; }
+.wl-evrow__arrow--prev { left: 6px; }
+.wl-evrow__arrow--next { right: 6px; }
+
+/* MOVIL: sin despliegue, scroll horizontal nativo con snap */
+@media (max-width: 900px) {
+  /* snap obligatorio + alineado al inicio: cada swipe avanza UNA posición (= un bullet) */
+  .wl-evrow { scroll-snap-type: x mandatory; }
+  .wl-evrow__item { flex-basis: 240px; transform: none !important; scroll-snap-align: start; }
+  .wl-evrow__item:hover .wl-ev { transform: none; }
+  .wl-evrow:hover .wl-evrow__item { opacity: 1; }
+  .wl-evrow__arrow { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .wl-evrow__item { transform: none !important; transition: opacity 0.3s ease; }
+}
+
+/* ---------- BLOQUE INTERACTIVO: arma tu combinada ---------- */
+.wl-parlay__grid { display: grid; grid-template-columns: 1fr; gap: 16px; }
+@media (min-width: 900px) { .wl-parlay__grid { grid-template-columns: 1.5fr 1fr; align-items: start; } }
+.wl-parlay__matches { display: flex; flex-direction: column; gap: 10px; }
+.wl-parlay__match {
+  display: flex; align-items: center; justify-content: space-between; gap: 14px;
+  background: #0d0d0d; border: 1px solid rgba(255,255,255,0.09);
+  border-radius: var(--wl-radius-l); padding: 12px 14px;
+}
+.wl-parlay__match-info { min-width: 0; }
+.wl-parlay__match-meta { display: flex; align-items: center; gap: 8px; font-size: 11px; color: var(--wl-grey); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 7px; }
+.wl-parlay__match-meta .wl-match__live { font-size: 9px; padding: 1px 5px; }
+.wl-parlay__teams { display: flex; align-items: center; gap: 7px; font-size: var(--clmc-text-small, 14px); font-weight: 700; white-space: nowrap; overflow: hidden; }
+.wl-parlay__teams img { width: 22px; height: 22px; object-fit: contain; flex-shrink: 0; }
+.wl-parlay__vs { color: var(--wl-grey); font-weight: 400; margin: 0 2px; }
+.wl-parlay__outcomes { display: flex; gap: 6px; flex-shrink: 0; }
+@media (max-width: 560px) {
+  .wl-parlay__match { flex-direction: column; align-items: stretch; gap: 10px; }
+  .wl-parlay__outcomes { justify-content: space-between; }
+  .wl-parlay__odd { flex: 1; }
+}
+.wl-parlay__odd {
+  display: flex; flex-direction: column; align-items: center; gap: 2px;
+  min-width: 52px; cursor: pointer;
+  background: #16181d; border: 1px solid rgba(255,255,255,0.12);
+  border-radius: var(--wl-radius-s); padding: 7px 8px;
+  transition: border-color 0.18s, background 0.18s, transform 0.12s;
+}
+.wl-parlay__odd:hover { border-color: rgba(232,91,16,0.6); }
+.wl-parlay__odd:active { transform: scale(0.94); }
+.wl-parlay__odd span { font-size: 11px; color: var(--wl-grey); }
+.wl-parlay__odd b { font-size: 14px; font-weight: 800; font-variant-numeric: tabular-nums; }
+.wl-parlay__odd.is-on { background: var(--wl-orange); border-color: var(--wl-orange); }
+.wl-parlay__odd.is-on span, .wl-parlay__odd.is-on b { color: #fff; }
+
+/* boleto */
+.wl-slip {
+  background: #0c0c0c; border: 1px solid rgba(255,255,255,0.1);
+  border-radius: var(--wl-radius-l); padding: 16px;
+  position: sticky; top: 76px;
+}
+.wl-slip__head { display: flex; align-items: center; gap: 8px; font-weight: 800; font-size: var(--clmc-text-medium, 16px); margin-bottom: 12px; }
+.wl-slip__count { background: var(--wl-orange); color: #fff; border-radius: 999px; font-size: 12px; font-weight: 800; padding: 1px 9px; }
+.wl-slip__empty { color: var(--wl-grey); font-size: var(--clmc-text-small, 14px); margin: 6px 0 14px; }
+.wl-slip__list { list-style: none; margin: 0 0 12px; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.wl-slip__list li { display: flex; align-items: center; gap: 8px; border-bottom: 1px solid rgba(255,255,255,0.07); padding-bottom: 8px; }
+.wl-slip__list li > div { flex: 1; min-width: 0; }
+.wl-slip__list b { display: block; font-size: var(--clmc-text-small, 14px); font-weight: 700; }
+.wl-slip__list span { display: block; font-size: 11px; color: var(--wl-grey); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.wl-slip__list em { font-style: normal; font-weight: 800; color: var(--wl-orange-soft); font-variant-numeric: tabular-nums; }
+.wl-slip__remove { background: none; border: 0; color: var(--wl-grey); font-size: 20px; line-height: 1; cursor: pointer; padding: 0 2px; }
+.wl-slip__remove:hover { color: #fff; }
+.wl-slip__row { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; font-size: var(--clmc-text-small, 14px); color: var(--wl-grey); }
+.wl-slip__combined { color: #fff; font-size: 18px; font-weight: 800; font-variant-numeric: tabular-nums; }
+.wl-slip__stake { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 8px 0; font-size: var(--clmc-text-small, 14px); color: var(--wl-grey); }
+.wl-slip__stake > div { display: inline-flex; align-items: center; gap: 3px; background: #16181d; border: 1px solid rgba(255,255,255,0.14); border-radius: var(--wl-radius-s); padding: 6px 10px; color: #fff; font-weight: 700; }
+.wl-slip__stake input { width: 74px; background: none; border: 0; color: #fff; font-family: inherit; font-size: 15px; font-weight: 700; text-align: right; -moz-appearance: textfield; }
+.wl-slip__stake input::-webkit-outer-spin-button, .wl-slip__stake input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.wl-slip__payout { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 6px 0 14px; padding: 12px; background: rgba(232, 91, 16, 0.1); border: 1px solid rgba(232, 91, 16, 0.3); border-radius: var(--wl-radius-s); }
+.wl-slip__payout span { font-size: var(--clmc-text-small, 14px); color: #ffd9c2; }
+.wl-slip__payout b { font-size: 20px; font-weight: 800; color: var(--wl-gold); font-variant-numeric: tabular-nums; }
+.wl-slip__cta { width: 100%; }
+
+/* ---------- BLOQUE INTERACTIVO: ruleta de juegos ---------- */
+.wl-picker { }
+.wl-picker__inner {
+  position: relative; overflow: hidden;
+  border-radius: var(--wl-radius-l);
+  border: 1px solid rgba(255,255,255,0.09);
+  background:
+    linear-gradient(180deg, rgba(9,8,7,0.72) 0%, rgba(7,6,6,0.86) 100%),
+    url('/assets/img/bg-home-casino.jpg') center center / cover no-repeat;
+  display: grid; grid-template-columns: 1fr; gap: 18px;
+  padding: 26px 22px;
+}
+@media (min-width: 860px) {
+  .wl-picker__inner { grid-template-columns: 0.9fr 1.1fr; align-items: center; padding: 34px 36px; }
+}
+.wl-picker__left .wl-kicker { margin-bottom: 8px; }
+.wl-picker__left .wl-h2 { margin: 0 0 6px; }
+.wl-picker__left .wl-sub { margin: 0 0 16px; }
+.wl-picker__result {
+  display: inline-flex; align-items: center; gap: 12px;
+  background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.12);
+  border-radius: var(--wl-radius-l); padding: 8px 14px 8px 8px; margin-bottom: 16px;
+  min-width: 220px;
+}
+.wl-picker__result img { width: 48px; height: 48px; border-radius: 8px; object-fit: cover; border: 1px solid rgba(255,255,255,0.15); }
+.wl-picker__result span { display: block; font-size: 11px; color: var(--wl-grey); text-transform: uppercase; letter-spacing: 0.08em; }
+.wl-picker__result b { display: block; font-size: var(--clmc-text-medium, 16px); font-weight: 800; max-width: 220px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.wl-picker__actions { display: flex; gap: 12px; flex-wrap: wrap; }
+.wl-picker__actions .wl-btn:disabled { opacity: 0.7; cursor: default; }
+
+.wl-reel-col { display: flex; flex-direction: column; }
+.wl-reel__name { text-align: center; color: #fff; font-weight: 400; font-size: 13px; margin-top: 12px; min-height: 17px; letter-spacing: 0.01em; }
+.wl-reel {
+  position: relative; overflow: hidden;
+  height: 200px;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 16%, #000 84%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 16%, #000 84%, transparent);
+}
+.wl-reel__strip {
+  position: absolute; top: 50%; left: 0;
+  display: flex; gap: 14px; align-items: center;
+  transform: translate3d(0,0,0); margin-top: -68px;
+  will-change: transform;
+}
+/* cuadrados: los thumbnails de producción son 1:1 → no se deforman */
+.wl-reel__card {
+  flex: none; width: 136px; height: 136px;
+  border-radius: 12px; overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.12);
+  opacity: 0.72;
+  transform: scale(0.9);
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+@media (max-width: 620px) { .wl-reel__card { width: 104px; height: 104px; } .wl-reel__strip { margin-top: -52px; } .wl-reel { height: 168px; } }
+.wl-reel__card img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.wl-reel__card.is-center {
+  opacity: 1; transform: scale(1.18);
+  box-shadow: 0 16px 40px rgba(0,0,0,0.6), 0 0 34px rgba(232, 91, 16, 0.4);
+  z-index: 2;
+}
+/* durante el giro: todas las cards planas a escala 1 (nada se "encoge" raro);
+   al aterrizar, el is-center vuelve a crecer suave */
+.wl-reel--spinning .wl-reel__card { transform: scale(1); opacity: 0.85; }
+/* marco central fijo cuadrado (como la referencia) */
+.wl-reel__frame {
+  position: absolute; top: 50%; left: 50%; z-index: 3;
+  width: 162px; height: 162px;
+  transform: translate(-50%, -50%);
+  border: 3px solid #fff; border-radius: 14px;
+  box-shadow: 0 0 0 4px rgba(0,0,0,0.35), 0 0 30px rgba(232, 91, 16, 0.35);
+  pointer-events: none;
+}
+@media (max-width: 620px) { .wl-reel__frame { width: 124px; height: 124px; } }
+.wl-reel__tri { position: absolute; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 9px solid transparent; border-right: 9px solid transparent; }
+.wl-reel__tri--top { top: -11px; border-top: 11px solid #fff; }
+.wl-reel__tri--bot { bottom: -11px; border-bottom: 11px solid #fff; }
+
+/* ---------- indicador EN VIVO ---------- */
+.wl-live-dot {
+  width: 8px; height: 8px; border-radius: 50%; background: #ff3b30; display: inline-block;
+  animation: wl-pulse-dot 1.4s ease-in-out infinite;
+}
+@keyframes wl-pulse-dot { 0%,100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.45; transform: scale(0.8); } }
+
+/* ---------- S3 CASINO (cards clmc reales + glow) ---------- */
+.wl-row-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; margin: 0 0 40px; }
+.wl-deportes { padding-top: 118px; padding-bottom: 128px; }
+.wl-live-section { padding-top: 104px; padding-bottom: 120px; }
+.wl-picker { padding-top: 92px; padding-bottom: 92px; }
+#promos { padding-top: 92px; padding-bottom: 92px; }
+.wl-row-head h3 { min-width: 0; }
+.wl-see-all { white-space: nowrap; flex-shrink: 0; }
+.wl-row-head h3 { display: flex; align-items: center; gap: 10px; font-size: var(--clmc-text-large, 24px); font-weight: 800; margin: 0; }
+.wl-row-icon { width: 26px; height: 26px; object-fit: contain; }
+.wl-count-badge {
+  background: var(--clmc-btn-color-primary, #e85b10); color: #fff;
+  font-size: var(--clmc-text-xsmall, 12px); font-weight: 700;
+  border-radius: 999px; padding: 2px 10px;
+}
+.wl-see-all { font-size: var(--clmc-text-small, 14px); font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; display: inline-flex; align-items: center; gap: 6px; }
+.wl-see-all:hover { color: var(--wl-orange-soft); }
+
+.wl-machine { position: relative; border-radius: var(--wl-radius-s); }
+.wl-machine::before {
+  content: ""; position: absolute; inset: -1px; z-index: 0;
+  border-radius: inherit;
+  background: var(--wl-glow, rgba(232, 91, 16, 0.5));
+  opacity: 0; transition: opacity 0.3s;
+  filter: blur(14px);
+}
+.wl-machine:hover::before { opacity: 0.55; }
+.wl-machine .clmc-machine { z-index: 1; }
+/* el nombre + Play van POR ENCIMA del barrido naranja (el ::after es positioned;
+   el div necesita position para que su z-index gane) */
+.wl-machine .clmc-machine-hover div { position: relative; z-index: 2; gap: 10px; }
+.wl-machine .clmc-machine-hover::after { z-index: 1; }
+.wl-machine .clmc-machine-favs-button { z-index: 3; }
+.wl-machine .clmc-machine-hover span { font-weight: 800; text-align: center; padding: 0 10px; font-size: var(--clmc-text-small, 14px); }
+.wl-play-btn {
+  background: #fff; color: var(--wl-orange); border: 0; cursor: pointer;
+  font-weight: 800; border-radius: 999px; padding: 8px 22px; font-size: 13px;
+  text-transform: uppercase; letter-spacing: 0.06em;
+}
+.wl-machine .clmc-machine-image { width: 100%; min-width: 0; height: auto; min-height: 0; aspect-ratio: 1/1; object-fit: cover; display: block; }
+.wl-machine .clmc-machine-favs-button { border: 0; cursor: pointer; }
+
+.wl-top-item { padding-left: 30px; position: relative; }
+.wl-top-item .wl-rank {
+  position: absolute; left: 0; bottom: -4px; z-index: 2;
+  font-size: 88px; line-height: 0.82; font-weight: 800; color: #000;
+  -webkit-text-stroke: 2px rgba(255, 255, 255, 0.7);
+  pointer-events: none; user-select: none;
+}
+
+/* entrada escalonada de cards al revelar la fila */
+.wl-stagger .splide__slide { opacity: 0; transform: translateY(18px) scale(0.96); transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
+.wl-inview .wl-stagger .splide__slide { opacity: 1; transform: none; }
+.wl-inview .wl-stagger .splide__slide:nth-child(1) { transition-delay: 0.05s; }
+.wl-inview .wl-stagger .splide__slide:nth-child(2) { transition-delay: 0.1s; }
+.wl-inview .wl-stagger .splide__slide:nth-child(3) { transition-delay: 0.15s; }
+.wl-inview .wl-stagger .splide__slide:nth-child(4) { transition-delay: 0.2s; }
+.wl-inview .wl-stagger .splide__slide:nth-child(5) { transition-delay: 0.25s; }
+.wl-inview .wl-stagger .splide__slide:nth-child(6) { transition-delay: 0.3s; }
+
+/* ---------- PODIO: los 3 más jugados flotando ---------- */
+.wl-podium {
+  position: relative;
+  display: flex; align-items: flex-end; justify-content: center;
+  gap: 18px;
+  padding: 30px 0 26px;
+  margin-bottom: 10px;
+}
+.wl-podium__glow { top: 60%; right: auto; left: 50%; transform: translate(-50%, -50%); }
+.wl-podium__item {
+  position: relative;
+  width: clamp(120px, 26vw, 240px);
+  border-radius: 16px;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  animation: wl-bob 6s ease-in-out infinite alternate;
+  will-change: transform;
+}
+.wl-podium__item--1 { width: clamp(150px, 32vw, 300px); z-index: 2; animation-delay: 0.4s; }
+.wl-podium__item--2 { animation-delay: 0s; margin-bottom: -8px; }
+.wl-podium__item--3 { animation-delay: 1.1s; margin-bottom: -14px; }
+.wl-podium__img {
+  display: block; width: 100%; aspect-ratio: 1/1; object-fit: cover;
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,0.18);
+  box-shadow: 0 22px 50px rgba(0, 0, 0, 0.7), 0 0 40px rgba(232, 91, 16, 0.28);
+}
+.wl-podium__rank {
+  position: absolute; left: -14px; bottom: 34px; z-index: 3;
+  font-size: clamp(60px, 9vw, 110px); line-height: 0.82; font-weight: 800; color: #000;
+  -webkit-text-stroke: 2px rgba(255, 255, 255, 0.75);
+  pointer-events: none; user-select: none;
+}
+.wl-podium__meta {
+  display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  padding: 10px 2px 0;
+}
+.wl-podium__meta b { font-size: var(--clmc-text-small, 14px); font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.wl-podium__meta .wl-play-btn { flex-shrink: 0; padding: 6px 16px; }
+@media (max-width: 560px) {
+  .wl-podium { gap: 10px; }
+  .wl-podium__rank { left: -8px; bottom: 30px; }
+  .wl-podium__meta b { font-size: 12px; }
+}
+
+/* ---------- casino en vivo ---------- */
+.wl-live-grid { position: relative; z-index: 1; }
+
+/* ---------- juguetes físicos interactivos (ficha / balón) ---------- */
+.wl-toy-zone { position: absolute; inset: 0; overflow: hidden; pointer-events: none; z-index: 3; }
+.wl-toy {
+  position: absolute; top: 0; left: 0;
+  pointer-events: auto; cursor: grab; touch-action: none;
+  user-select: none; -webkit-user-select: none;
+  transform-origin: center; will-change: transform;
+  transition: filter 0.2s;
+}
+.wl-toy:active { cursor: grabbing; }
+.wl-toy svg { display: block; pointer-events: none; }
+/* wrapper interno para el wobble de hover (el transform externo lo controla el JS) */
+.wl-toy__art { display: block; width: 100%; height: 100%; position: relative; transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1); }
+.wl-toy:hover .wl-toy__art { transform: scale(1.12); }
+.wl-toy:active .wl-toy__art { transform: scale(0.94); }
+/* arte del juguete = imagen intercambiable (assets/toys/) */
+.wl-toy__art img { display: block; width: 100%; height: 100%; object-fit: contain; }
+/* recompensa al aventar fuerte */
+.wl-toy-pop {
+  position: absolute; z-index: 5; transform: translate(-50%, -50%);
+  font-weight: 800; pointer-events: none; white-space: nowrap;
+}
+.wl-toy-particle {
+  position: absolute; z-index: 4; width: 9px; height: 9px; border-radius: 50%;
+  transform: translate(-50%, -50%); pointer-events: none;
+  animation: wl-particle 0.7s ease-out forwards;
+}
+.wl-toy-particle--chip { background: radial-gradient(circle at 35% 30%, #ffe08a, var(--wl-orange, #e85b10)); }
+.wl-toy-particle--ball { background: #fff; box-shadow: 0 0 0 1px rgba(0,0,0,0.2); }
+@keyframes wl-particle {
+  0% { opacity: 1; transform: translate(-50%, -50%) translate(0, 0) scale(1); }
+  100% { opacity: 0; transform: translate(-50%, -50%) translate(var(--dx), var(--dy)) scale(0.3); }
+}
+/* portería */
+.wl-goal {
+  position: absolute; left: 26px; bottom: 14px; z-index: 1;
+  width: 104px; height: 76px; opacity: 0.6; pointer-events: none;
+  transition: opacity 0.3s, filter 0.3s;
+}
+@media (max-width: 900px) { .wl-goal { width: 84px; height: 62px; left: 12px; } }
+.wl-toy-zone--played .wl-goal { opacity: 0.82; }
+.wl-toy-zone--goal .wl-goal { opacity: 1; filter: drop-shadow(0 0 16px rgba(232, 91, 16, 0.9)); }
+.wl-toy-zone--goal { animation: wl-goal-flash 0.7s ease; }
+@keyframes wl-goal-flash {
+  0% { box-shadow: inset 0 0 0 0 rgba(232,91,16,0); }
+  25% { box-shadow: inset 0 0 120px 0 rgba(232,91,16,0.22); }
+  100% { box-shadow: inset 0 0 0 0 rgba(232,91,16,0); }
+}
+.wl-goal-score {
+  position: absolute; left: 34px; bottom: 82px; z-index: 2;
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 13px; font-weight: 800; color: #fff; pointer-events: none;
+  background: rgba(0,0,0,0.55); border-radius: 999px; padding: 3px 10px;
+}
+.wl-goal-score b { color: var(--wl-gold, #f5b642); }
+/* el iconito del marcador usa el MISMO asset del juguete (se tematiza solo) */
+.wl-goal-score__ic { width: 14px; height: 14px; object-fit: contain; }
+/* labels de recompensa */
+.wl-toy-pop--goal {
+  font-size: 34px; color: #fff; letter-spacing: 0.02em;
+  text-shadow: 0 3px 14px rgba(232,91,16,0.9), 0 2px 6px rgba(0,0,0,0.8);
+  animation: wl-goalpop 1.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+@keyframes wl-goalpop {
+  0% { opacity: 0; transform: translate(-50%, -25%) scale(0.5); }
+  18% { opacity: 1; transform: translate(-50%, -58%) scale(1.18); }
+  32% { transform: translate(-50%, -62%) scale(1); }
+  74% { opacity: 1; transform: translate(-50%, -66%) scale(1); }
+  100% { opacity: 0; transform: translate(-50%, -96%) scale(1); }
+}
+.wl-toy-pop--prize {
+  font-size: 15px; color: #fff; background: linear-gradient(180deg, #e85b10, #b8480a);
+  border: 1px solid rgba(255,255,255,0.35); border-radius: 999px; padding: 7px 15px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.55);
+  display: inline-flex; align-items: center; gap: 7px;
+  animation: wl-prizepop 2.8s ease forwards;
+}
+.wl-toy-pop__ic { display: inline-flex; color: #fff; }
+.wl-toy-pop__ic svg { display: block; }
+@keyframes wl-prizepop {
+  0% { opacity: 0; transform: translate(-50%, -10%) scale(0.7); }
+  10% { opacity: 1; transform: translate(-50%, -75%) scale(1.06); }
+  18% { transform: translate(-50%, -86%) scale(1); }
+  82% { opacity: 1; transform: translate(-50%, -92%) scale(1); }
+  100% { opacity: 0; transform: translate(-50%, -118%) scale(0.98); }
+}
+.wl-toy--chip { filter: drop-shadow(0 10px 22px rgba(232, 91, 16, 0.45)); }
+.wl-toy--ball { filter: drop-shadow(0 8px 14px rgba(0, 0, 0, 0.5)); }
+.wl-toy--chip:hover { filter: drop-shadow(0 12px 30px rgba(232, 91, 16, 0.7)); }
+.wl-toy--ball:hover { filter: drop-shadow(0 10px 18px rgba(0, 0, 0, 0.65)); }
+/* llamada de atención antes de la 1a interacción */
+@media (prefers-reduced-motion: no-preference) {
+  .wl-toy-zone:not(.wl-toy-zone--played) .wl-toy { animation: wl-toy-call 2.6s ease-in-out infinite; }
+}
+@keyframes wl-toy-call {
+  0%, 100% { filter: drop-shadow(0 10px 22px rgba(232, 91, 16, 0.45)); }
+  50% { filter: drop-shadow(0 10px 30px rgba(232, 91, 16, 0.85)); }
+}
+.wl-toy-zone--ball:not(.wl-toy-zone--played) .wl-toy { animation: none; }
+/* globito bonito que señala al juguete (posición por JS = centro del juguete) */
+.wl-toy-hint {
+  position: absolute; z-index: 5; pointer-events: none; white-space: nowrap;
+  background: #fff; color: #14100c; font-weight: 500; font-size: 13px; letter-spacing: 0.01em;
+  border-radius: 999px; padding: 7px 15px; box-shadow: 0 12px 28px rgba(0,0,0,0.42);
+}
+.wl-toy-hint::after {
+  content: ""; position: absolute; left: 50%; margin-left: -6px;
+  width: 12px; height: 12px; background: #fff; transform: rotate(45deg);
+}
+/* balón ahora está ARRIBA → el globito va DEBAJO (cola hacia arriba) para no cortarse */
+.wl-toy-zone--ball .wl-toy-hint { animation: wl-hint-chip 1.7s ease-in-out infinite, wl-hint-fade 6.5s ease forwards; }
+.wl-toy-zone--ball .wl-toy-hint::after { top: -5px; }
+.wl-toy-zone--chip .wl-toy-hint { animation: wl-hint-chip 1.7s ease-in-out infinite, wl-hint-fade 6.5s ease forwards; }
+.wl-toy-zone--chip .wl-toy-hint::after { top: -5px; box-shadow: -3px -3px 6px rgba(0,0,0,0.06); }
+@keyframes wl-hint-ball { 0%, 100% { transform: translate(-50%, calc(-100% - 42px)); } 50% { transform: translate(-50%, calc(-100% - 49px)); } }
+@keyframes wl-hint-chip { 0%, 100% { transform: translate(-50%, 42px); } 50% { transform: translate(-50%, 49px); } }
+@keyframes wl-hint-fade { 0%, 82% { opacity: 0.98; } 100% { opacity: 0; } }
+.wl-toy-zone--played .wl-toy-hint { opacity: 0 !important; animation: none; }
+@media (prefers-reduced-motion: reduce) {
+  .wl-toy-zone--ball .wl-toy-hint { animation: wl-hint-fade 6.5s ease forwards; transform: translate(-50%, 42px); }
+  .wl-toy-zone--chip .wl-toy-hint { animation: wl-hint-fade 6.5s ease forwards; transform: translate(-50%, 42px); }
+}
+@media (max-width: 900px) { .wl-toy-hint { font-size: 12px; padding: 6px 12px; } }
+
+
+/* ---------- CASINO · TOP 10 (fondo de marca, no negro) ---------- */
+.wl-top10 { position: relative; }
+.wl-top10__bg { position: absolute; inset: 0; z-index: 0; pointer-events: none; background: #000; }
+.wl-top10 > * { position: relative; z-index: 1; }
+.wl-top10 { padding-bottom: 78px; }
+/* el track recorta en vertical (overflow:hidden) y cortaba los números de ranking
+   que cuelgan del card → padding-bottom para darles aire sin romper el carrusel */
+.wl-top10__slider .splide__track { padding-bottom: 30px; }
+.wl-top10__head { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; margin-bottom: 40px; }
+/* bullets ovalados + flechas del slider del Top 10 (estilo casino) */
+/* flechas centradas sobre el CARD (no sobre el .splide completo, que incluye la
+   paginación abajo y bajaba el 50%). Offset = mitad de (padding track + paginación). */
+.wl-top10__slider .splide__arrow { top: calc(50% - 40px); }
+.wl-top10__slider .splide__arrow--prev, .wl-promo-slider .splide__arrow--prev { left: 6px; }
+.wl-top10__slider .splide__arrow--next, .wl-promo-slider .splide__arrow--next { right: 6px; }
+/* CHEVRON UNIFICADO (borde CSS) para TODAS las flechas — idéntico y sin cortes */
+.wl-top10__slider .splide__arrow svg, .wl-promo-slider .splide__arrow svg,
+.wl-evrow__arrow svg, .wl-slotgal__arrow svg { display: none !important; }
+.wl-top10__slider .splide__arrow::after, .wl-promo-slider .splide__arrow::after,
+.wl-evrow__arrow::after, .wl-slotgal__arrow::after {
+  content: ""; width: 7px; height: 7px;
+  border-top: 2.5px solid #fff; border-right: 2.5px solid #fff;
+  transform: rotate(45deg); margin-left: -3px;
+}
+.wl-top10__slider .splide__arrow--prev::after, .wl-promo-slider .splide__arrow--prev::after,
+.wl-evrow__arrow--prev::after, .wl-slotgal__arrow--prev::after {
+  transform: rotate(-135deg); margin-left: 3px;
+}
+/* bullets justificados a la IZQUIERDA (regla global: solo los del hero van centrados) */
+.wl-top10__slider .splide__pagination { position: static; display: none; justify-content: flex-start; gap: 8px; padding: 30px 0 2px; }
+@media (max-width: 899px) { .wl-top10__slider .splide__pagination { display: flex; } }
+.wl-top10__slider .splide__pagination__page { width: 9px; height: 9px; border-radius: 5px; margin: 0; background: rgba(255,255,255,0.32); opacity: 1; transform: none; transition: width 0.25s, background 0.25s; }
+.wl-top10__slider .splide__pagination__page.is-active { width: 26px; background: var(--wl-orange); transform: none; }
+
+/* ---------- COSTURAS NARANJAS entre secciones oscuras (degradado de marca) ---------- */
+/* El fondo negro se calienta a naranja en el borde; dos secciones contiguas suman
+   sus bordes = una costura naranja que las une (idea del usuario). Full-bleed 100vw
+   (seguro: .wl-main tiene overflow-x:clip). El contenido sube a z-index 1. */
+.wl-seam-top, .wl-seam-bottom { position: relative; }
+.wl-seam-top > *, .wl-seam-bottom > * { position: relative; z-index: 1; }
+.wl-seam-top::before, .wl-seam-bottom::after {
+  content: ""; position: absolute; left: 50%; width: 100vw; transform: translateX(-50%);
+  height: 220px; pointer-events: none; z-index: 0;
+}
+.wl-seam-top::before { top: 0; background: linear-gradient(180deg, rgba(255,120,24,0.34), rgba(255,120,24,0.10) 42%, transparent 82%); }
+.wl-seam-bottom::after { bottom: 0; background: linear-gradient(0deg, rgba(255,120,24,0.34), rgba(255,120,24,0.10) 42%, transparent 82%); }
+
+/* ---------- BANDAS CLARAS full-bleed (ritmo editorial claro/oscuro) ---------- */
+.wl-band--light { position: relative; }
+.wl-band--light::before {
+  content: ""; position: absolute; z-index: 0; top: 0; bottom: 0; left: 50%;
+  width: 100vw; transform: translateX(-50%);
+  background:
+    radial-gradient(110% 90% at 100% 0%, rgba(232,91,16,0.06), transparent 60%),
+    #f4f1ec;
+}
+.wl-band--light > * { position: relative; z-index: 1; }
+.wl-band--light .wl-h2 { color: #17110c; }
+.wl-band--light .wl-sub { color: #6f665b; }
+.wl-band--light .wl-kicker { color: #b25415; }
+.wl-band--light .wl-see-all { color: var(--wl-orange); }
+.wl-band--light .wl-live-card { box-shadow: 0 16px 34px rgba(20,14,8,0.18); }
+.wl-band--light .wl-live-decor { opacity: 0.45; }
+
+/* ---------- TRAGAMONEDAS: carrusel horizontal AUTO-PLAY (scroll libre) ---------- */
+.wl-slotgal {
+  position: relative; padding: 132px 0 120px; overflow: hidden;
+  background:
+    radial-gradient(120% 90% at 100% 0%, rgba(232,91,16,0.06), transparent 60%),
+    #f4f1ec;
+}
+.wl-slotgal__head {
+  position: relative; z-index: 1;
+  display: flex; align-items: flex-end; justify-content: space-between; gap: 16px;
+  width: 100%; max-width: 1280px; margin: 0 auto; padding: 0 16px 34px;
+}
+@media (min-width: 900px) { .wl-slotgal__head { padding: 0 32px 34px; } }
+.wl-slotgal__head .wl-h2 { color: #17110c; margin: 0; }
+.wl-slotgal__head .wl-sub { color: #6f665b; margin: 6px 0 0; }
+.wl-slotgal .wl-see-all { color: var(--wl-orange); }
+.wl-slotgal .wl-machine { box-shadow: 0 14px 30px rgba(20, 14, 8, 0.14); border-radius: var(--wl-radius-s); }
+
+.wl-slotgal__wrap { position: relative; }
+.wl-slotgal__scroller {
+  display: flex; gap: 20px; align-items: center;
+  overflow-x: auto; padding: 24px 32px 24px; scrollbar-width: none;
+}
+.wl-slotgal__scroller::-webkit-scrollbar { display: none; }
+/* tamaños VARIADOS (unos más grandes, unos más chicos) + onda sutil */
+.wl-slotcard { position: relative; flex: 0 0 auto; width: clamp(190px, 19.5vw, 234px); }
+.wl-slotcard:nth-child(3n+1) { width: clamp(214px, 22.5vw, 272px); }
+.wl-slotcard:nth-child(3n+2) { width: clamp(172px, 17vw, 206px); }
+.wl-slotcard:nth-child(even) { transform: translateY(18px); }
+.wl-slotcard:nth-child(5n) { transform: translateY(-16px); }
+
+/* flechas: MISMO estilo que Top 10 / eventos; aparecen al pasar el cursor */
+/* MISMA flecha que Top 10 (Splide de producción): círculo blanco translúcido + ícono blanco */
+.wl-slotgal__arrow {
+  position: absolute; top: 50%; transform: translateY(-50%); z-index: 4;
+  width: 32px; height: 32px; border-radius: 50%; border: 0; cursor: pointer; color: #fff;
+  background: rgba(255,255,255,0.5); box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; pointer-events: none; transition: opacity 0.2s ease, background 0.2s;
+}
+.wl-slotgal__wrap:hover .wl-slotgal__arrow { opacity: 1; pointer-events: auto; }
+.wl-slotgal__arrow:hover { background: var(--wl-orange); }
+.wl-slotgal__arrow svg { fill: #fff; width: 16px; height: 16px; }
+/* alineadas al margen del contenido (como el logo / botón del header) */
+.wl-slotgal__arrow--prev { left: 32px; }
+.wl-slotgal__arrow--next { right: 32px; }
+
+@media (max-width: 900px) {
+  /* SIN scroll-snap: pelea con el auto-play (el carrusel se desliza solo también en mobile) */
+  .wl-slotgal__scroller { padding: 12px 16px 16px; }
+  .wl-slotcard { width: clamp(150px, 46vw, 200px); }
+  .wl-slotgal__arrow { display: none; }
+}
+
+/* ---------- S4 CASINO EN VIVO (glass) ---------- */
+.wl-live-section .wl-sub { margin-bottom: 0; }
+.wl-live-grid { display: grid; gap: 16px; grid-template-columns: 1fr; margin-top: 0; }
+@media (min-width: 700px) { .wl-live-grid { grid-template-columns: repeat(3, 1fr); } }
+.wl-live-card {
+  position: relative; /* ancla el destello del hover */
+  display: flex; flex-direction: column; overflow: hidden;
+  border-radius: 14px; background: #16171b; border: 1px solid rgba(255,255,255,0.07);
+  transition: transform 0.28s cubic-bezier(0.16,1,0.3,1), border-color 0.28s, box-shadow 0.28s;
+}
+.wl-live-card:hover { transform: translateY(-6px); box-shadow: 0 24px 48px rgba(0,0,0,0.5); }
+/* media con aspecto propio: la imagen se ve completa, sin recortes feos */
+.wl-live-card__media { position: relative; aspect-ratio: 16 / 10; overflow: hidden; background: #0c0d0f; }
+.wl-live-card__img { width: 100%; height: 100%; object-fit: cover; object-position: center 30%; display: block; transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
+.wl-live-card:hover .wl-live-card__img { transform: scale(1.05); }
+.wl-live-card__badge {
+  position: absolute; top: 10px; left: 10px; z-index: 2;
+  display: inline-flex; align-items: center; gap: 6px;
+  background: rgba(0,0,0,0.6); backdrop-filter: blur(4px);
+  border-radius: 999px; padding: 4px 10px;
+  font-size: 11px; font-weight: 800; letter-spacing: 0.06em; color: #fff;
+}
+.wl-live-card__body {
+  padding: 13px 15px; display: flex; align-items: center; justify-content: space-between; gap: 10px;
+}
+.wl-live-card__name { font-weight: 800; font-size: var(--clmc-text-medium, 16px); }
+.wl-live-card__sub { color: var(--wl-grey); font-size: 12px; margin-top: 3px; }
+
+/* ---------- S5 PROMOCIONES (imágenes reales + botones de producción) ---------- */
+.wl-promo-grid { display: grid; gap: 16px; grid-template-columns: 1fr; }
+@media (min-width: 620px) { .wl-promo-grid { grid-template-columns: 1fr 1fr; } }
+@media (min-width: 900px) { .wl-promo-grid { grid-template-columns: 1fr 1fr 1fr; } }
+.wl-promo-card {
+  position: relative; /* ancla el destello del hover */
+  display: block; overflow: hidden;
+  border-radius: var(--wl-radius-l);
+  border: 1px solid rgba(255,255,255,0.10);
+  background: #0c0c0c;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.25s, box-shadow 0.3s;
+}
+.wl-promo-card:hover { transform: translateY(-6px); box-shadow: 0 22px 46px rgba(0,0,0,0.5); }
+.wl-promo-card img { display: block; width: 100%; aspect-ratio: 2007 / 1054; object-fit: cover; }
+
+/* ---------- SEO block ---------- */
+.wl-seo { border-top: 1px solid rgba(255,255,255,0.08); }
+.wl-seo h2 { font-size: var(--clmc-text-large, 24px); font-weight: 800; margin: 0 0 6px; }
+.wl-seo h3 { font-size: var(--clmc-text-medium, 16px); font-weight: 800; margin: 22px 0 6px; color: var(--wl-orange-soft); }
+.wl-seo p { color: #c9c9c9; font-size: var(--clmc-text-small, 14px); line-height: 1.65; margin: 0 0 10px; max-width: 860px; }
+.wl-seo a { color: var(--wl-orange-soft); text-decoration: underline; }
+
+/* ---------- CTA sticky móvil ---------- */
+.wl-sticky-cta {
+  position: fixed; left: 12px; right: 12px; bottom: 74px; z-index: 1090;
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  background: rgba(20, 20, 20, 0.92);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(232, 91, 16, 0.5);
+  border-radius: 14px; padding: 10px 12px;
+  transform: translateY(140%); opacity: 0;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s;
+}
+.wl-sticky-cta.is-visible { transform: none; opacity: 1; }
+.wl-sticky-cta__txt { font-size: 13px; line-height: 1.25; }
+.wl-sticky-cta__txt b { color: var(--wl-gold); }
+.wl-sticky-cta .wl-btn { padding: 10px 18px; font-size: 14px; flex-shrink: 0; }
+@media (min-width: 900px) { .wl-sticky-cta { display: none; } }
+
+/* ---------- bottom nav de producción (fragmento) ---------- */
+.wl-only-mobile { display: none; }
+@media (max-width: 899px) {
+  .wl-only-mobile { display: block; }
+  .wl-only-mobile .clmc-mobile-navigation { z-index: 1100; }
+  .wl-main { padding-bottom: 80px; }
+}
+
+/* ---------- accesibilidad / reduced motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .wl-membrane__blob, .wl-live-dot, .wl-floater, .wl-float-ring,
+  .wl-podium__item, .wl-chip-orb { animation: none !important; }
+  .wl-reveal, .wl-stagger .splide__slide { opacity: 1; transform: none; transition: none; }
+  .wl-reel__strip { transition: none !important; }
+}
+
+/* ==================== BULLETS del carrusel de eventos ==================== */
+.wl-evrow-dots, .wl-dots { display: none; }
+/* bullets del Top 10 (mismo patrón que Eventos): solo en móvil/tablet, a la izquierda */
+@media (max-width: 899px) {
+  .wl-dots { display: flex; justify-content: flex-start; gap: 7px; padding: 18px 4px 0; }
+}
+.wl-dot { width: 8px; height: 8px; border-radius: 5px; background: rgba(255,255,255,0.3); transition: width 0.25s, background 0.25s; }
+.wl-dot--on { width: 22px; background: var(--wl-orange); }
+
+/* ==================== PASE MOBILE / TABLET (<900px) ==================== */
+@media (max-width: 899px) {
+  /* cabeceras de sección: apiladas a la izquierda, con AIRE título→texto→CTA */
+  .wl-row-head, .wl-top10__head, .wl-slotgal__head {
+    flex-direction: column; align-items: flex-start; gap: 16px;
+  }
+  /* los subs traen margin inline (6px) → se sube con !important */
+  .wl-row-head .wl-sub, .wl-top10__head .wl-sub, .wl-slotgal__head .wl-sub { margin-top: 10px !important; }
+  .wl-see-all { font-size: 13px; }
+
+  /* MÓVIL: sin flechas en los carruseles Splide — el control es con el dedo */
+  .wl-top10__slider .splide__arrow,
+  .wl-promo-slider .splide__arrow { display: none !important; }
+  /* la zona de juego de la ficha arranca más abajo: le da margen superior real */
+  .wl-toy-zone--chip { top: 22px; }
+  /* juguetes más pequeños (menos invasivos) — la física re-mide el radio */
+  .wl-toy--ball { width: 44px !important; height: 44px !important; }
+  .wl-toy--chip { width: 56px !important; height: 56px !important; }
+  .wl-goal { width: 64px; height: 47px; left: 16px; bottom: 4px; }
+  .wl-goal-score { left: 20px; bottom: 54px; font-size: 12px; padding: 2px 8px; }
+  .wl-toy-hint { font-size: 11px; padding: 5px 11px; }
+
+  /* bullets de eventos (izquierda) + franja reservada para la portería debajo */
+  .wl-evrow-dots { display: flex; justify-content: flex-start; gap: 7px; padding: 2px 4px 0; margin-bottom: 56px; }
+
+  /* ruleta de juegos: CTAs apilados y full-width (nombres largos ya no rompen) */
+  .wl-picker__actions { flex-direction: column; align-items: stretch; width: 100%; }
+  .wl-picker__actions .wl-btn { width: 100%; justify-content: center; }
+
+  /* RITMO 40px entre bloques (40 abajo + 40 arriba) */
+  .wl-hero888 { padding-bottom: 24px; }
+  .wl-top10 { padding-top: 40px; padding-bottom: 40px; }
+  .wl-deportes { padding-top: 40px; padding-bottom: 40px; }
+  .wl-live-section { padding-top: 40px; padding-bottom: 40px; }
+  .wl-slotgal { padding: 132px 0 88px; } /* top amplio para la ficha + su globito; abajo con aire parejo */
+  .wl-picker { padding-top: 40px; padding-bottom: 40px; }
+  #promos { padding-top: 40px; padding-bottom: 36px; }
+}
+
+
+/* ---------- HOVER: destello que RECORRE el contorno del card ----------
+   Un anillo de luz naranja gira alrededor del card y se recorta con una máscara para
+   que solo se vea en el borde (no invade el contenido). Solo en dispositivos con
+   cursor; en táctil no aplica. Si el navegador no soporta @property, simplemente no
+   se anima y queda un borde naranja tenue (nunca se rompe). */
+@property --wl-beam {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+@keyframes wl-beam-spin { to { --wl-beam: 1turn; } }
+
+@media (hover: hover) and (pointer: fine) {
+  .wl-ev::after,
+  .wl-live-card::after,
+  .wl-promo-card::after {
+    content: "";
+    position: absolute; inset: 0; z-index: 5;
+    border-radius: inherit; padding: 1.5px;
+    opacity: 0; transition: opacity 0.3s ease; pointer-events: none;
+    background: conic-gradient(
+      from var(--wl-beam),
+      transparent 0 0.62turn,
+      rgba(232, 91, 16, 0.5) 0.74turn,
+      #ffb066 0.8turn,
+      #fff 0.83turn,
+      #ffb066 0.86turn,
+      rgba(232, 91, 16, 0.5) 0.92turn,
+      transparent 1turn
+    );
+    mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    mask-composite: exclude;
+  }
+  .wl-evrow__item:hover .wl-ev::after,
+  .wl-live-card:hover::after,
+  .wl-promo-card:hover::after {
+    opacity: 1;
+    animation: wl-beam-spin 4.5s linear infinite;
+  }
+  /* resplandor exterior muy tenue que acompaña al destello */
+  .wl-evrow__item:hover .wl-ev,
+  .wl-live-card:hover,
+  .wl-promo-card:hover { box-shadow: 0 24px 50px rgba(0,0,0,0.55), 0 0 26px rgba(232, 91, 16, 0.20); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .wl-evrow__item:hover .wl-ev::after,
+  .wl-live-card:hover::after,
+  .wl-promo-card:hover::after { animation: none; background: none; box-shadow: inset 0 0 0 1.5px rgba(232,91,16,0.55); }
+}
