@@ -67,9 +67,9 @@ export default function PhysicsToy({ type = 'chip', label }) {
         const gr = goalRef.current.getBoundingClientRect();
         // boca REAL de la portería (más chica que la caja del SVG): debe entrar de verdad
         S.goal = {
-          x2: gr.left - gz.left + gr.width * 0.62,           // entrar a la boca
-          y1: gr.top - gz.top + gr.height * 0.32,            // bajo el travesaño
-          y2: gr.top - gz.top + gr.height * 0.82,            // sobre el suelo
+          x2: gr.left - gz.left + gr.width * 0.80,           // entrar a la boca (más amplia)
+          y1: gr.top - gz.top + gr.height * 0.18,            // bajo el travesaño (más alto)
+          y2: gr.top - gz.top + gr.height * 0.96,            // sobre el suelo (más bajo)
         };
       }
     };
@@ -165,7 +165,7 @@ export default function PhysicsToy({ type = 'chip', label }) {
       else if (S.y > S.H - r) { S.y = S.H - r; if (Math.abs(S.vy) > 3) hitFloor = true; S.vy = -Math.abs(S.vy) * P.rest; S.vx *= (isBall ? 0.84 : 1); S.av = S.vx * P.spin; if (Math.abs(S.vy) < 1.2) S.vy = 0; }
       // GOL: hay que aventarlo con FUERZA hacia la izquierda (vx<-6) y que el balón
       // entre de verdad a la boca de la portería (no basta rozar el borde).
-      if (isBall && S.goal && !S.scored && S.vx < -9 && S.x < S.goal.x2 && S.y > S.goal.y1 && S.y < S.goal.y2) {
+      if (isBall && S.goal && !S.scored && S.vx < -5 && S.x < S.goal.x2 && S.y > S.goal.y1 && S.y < S.goal.y2) {
         S.scored = true; S.goals++; celebrateGoal(S.x, S.y);
         S.vx *= 0.18; S.vy *= 0.18;
       }

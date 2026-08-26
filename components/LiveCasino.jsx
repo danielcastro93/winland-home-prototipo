@@ -37,7 +37,7 @@ export default function LiveCasino() {
       <div className="wl-row-head wl-reveal">
         <div>
           <h2 className="wl-h2" style={{ margin: 0 }}>La mesa te espera</h2>
-          <p className="wl-sub" style={{ margin: '6px 0 0' }}>Ruleta, Blackjack y Baccarat con crupieres reales transmitiendo ahora mismo.</p>
+          <p className="wl-sub" style={{ margin: '16px 0 0' }}>Ruleta, Blackjack y Baccarat con crupieres reales transmitiendo ahora mismo.</p>
         </div>
         <a className="wl-see-all" href="#" onClick={dead}>
           Ver casino en vivo

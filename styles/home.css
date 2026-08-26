@@ -8,6 +8,9 @@
    ============================================================ */
 
 :root {
+  /* TEXTOS EN BARLOW (propuesta): el chrome de producción usa var(--clmc-font) para
+     su texto → al apuntarla a Barlow, footer/labels también siguen la fuente nueva. */
+  --clmc-font: 'Barlow';
   --wl-orange: var(--clmc-color-primary, #e85b10);
   --wl-orange-soft: #ff8a3d;
   --wl-grey: var(--clmc-color-quinary, #adadad);
@@ -73,18 +76,18 @@ nextjs-portal, #__next-dev-tools-indicator, [data-next-badge-root], [data-nextjs
 
 /* ---------- SPACE GROTESK: titulares, header, CTAs y títulos del footer; cuerpo en Denim ----------
    !important: la CSS de producción fuerza font-family winland !important en headings */
-.wl-h2, .wl-h888__title { font-family: 'Sora', var(--clmc-font, winland), system-ui, sans-serif !important; letter-spacing: 0.005em; }
-.wl-h888__title { font-weight: 600 !important; }  /* H1: 600 */
-.wl-h2 { font-weight: 500 !important; }            /* H2: 500 */
-.clmc-main-menu-link { font-family: 'Sora', var(--clmc-font, winland), system-ui, sans-serif !important; font-weight: 500; font-size: 15px !important; }
+.wl-h2, .wl-h888__title { font-family: 'Barlow', var(--clmc-font, winland), system-ui, sans-serif !important; letter-spacing: 0.005em; }
+.wl-h888__title { font-weight: 700 !important; }  /* H1: bold */
+.wl-h2 { font-weight: 600 !important; }            /* H2: semibold */
+.clmc-main-menu-link { font-family: 'Barlow', var(--clmc-font, winland), system-ui, sans-serif !important; font-weight: 600 !important; font-size: 15px !important; letter-spacing: normal !important; }
 /* botones del header (Ingresar / Regístrate, viven en .anonymous-appBar) */
-.anonymous-appBar button, .anonymous-appBar a { font-family: 'Sora', var(--clmc-font, winland), system-ui, sans-serif !important; font-weight: 500 !important; font-size: 14px !important; }
+.anonymous-appBar button, .anonymous-appBar a { font-family: 'Barlow', var(--clmc-font, winland), system-ui, sans-serif !important; font-weight: 600 !important; font-size: 14px !important; letter-spacing: normal !important; }
 /* CTAs de la propuesta: botones (Girar, Jugar ahora, Entrar…) con el MISMO peso que
    Ingresar/Regístrate del header (600), y see-alls (Ver todo el casino, Todos los deportes…) */
-.wl-btn { font-family: 'Sora', var(--clmc-font, winland), system-ui, sans-serif !important; font-weight: 500 !important; }
-.wl-see-all { font-family: 'Sora', var(--clmc-font, winland), system-ui, sans-serif !important; font-weight: 500 !important; }
+.wl-btn { font-family: 'Barlow', var(--clmc-font, winland), system-ui, sans-serif !important; font-weight: 600 !important; }
+.wl-see-all { font-family: 'Barlow', var(--clmc-font, winland), system-ui, sans-serif !important; font-weight: 600 !important; }
 /* títulos del footer (¿Necesitas ayuda?, Legales, Ajustes, Más información sobre Winland) */
-.clmc-footer-title, .clmc-footer h3, .clmc-footer h4 { font-family: 'Sora', var(--clmc-font, winland), system-ui, sans-serif !important; }
+.clmc-footer-title, .clmc-footer h3, .clmc-footer h4 { font-family: 'Barlow', var(--clmc-font, winland), system-ui, sans-serif !important; }
 
 /* ---------- CHAT flotante — placeholder del launcher REAL de producción ----------
    En prod el chat es el widget global de Zendesk (iframe #launcher, burbuja flotante
@@ -137,7 +140,7 @@ nextjs-portal, #__next-dev-tools-indicator, [data-next-badge-root], [data-nextjs
 /* mobile: el footer reserva espacio para que los legales nunca queden bajo la burbuja */
 @media (max-width: 899px) { .clmc-footer { padding-bottom: 92px; } }
 /* mobile: por encima del bottom-nav y con aire extra para no tapar los legales */
-@media (max-width: 899px) { .wl-chat { bottom: 108px; } .wl-chat__bubble { width: 42px; height: 42px; } .wl-chat__bubble svg { width: 24px; height: 24px; } .wl-chat__label { display: none; } }
+@media (max-width: 899px) { .wl-chat { bottom: calc(74px + env(safe-area-inset-bottom, 0px)); } .wl-chat__bubble { width: 54px; height: 54px; } .wl-chat__bubble svg { width: 30px; height: 30px; } .wl-chat__label { display: none; } }
 
 /* ---------- CUPÓN (simulación de la barra del betslip de Altenar) ----------
    Oculto de inicio; aparece al tocar una cuota. Ver BetSlip.jsx para la nota de
@@ -168,7 +171,9 @@ nextjs-portal, #__next-dev-tools-indicator, [data-next-badge-root], [data-nextjs
 /* cuota seleccionada (cae al cupón) */
 .wl-ev__odd--on { background: var(--wl-orange) !important; border-color: var(--wl-orange) !important; }
 .wl-ev__odd--on b, .wl-ev__odd--on span { color: #fff !important; }
-body { font-family: var(--clmc-font, winland), system-ui, sans-serif; color: #fff; }
+/* TEXTOS EN BARLOW (propuesta): el cuerpo también en Barlow, no solo los titulares.
+   Para volver a Denim INK en el cuerpo, quitar 'Barlow' de aquí y el override de --clmc-font. */
+body { font-family: 'Barlow', var(--clmc-font, winland), system-ui, sans-serif; color: #fff; }
 h1, h2, h3, h4, p, button, input, select { font-family: inherit; }
 * { box-sizing: border-box; }
 img { max-width: 100%; }
@@ -234,8 +239,8 @@ a { color: inherit; text-decoration: none; }
   color: var(--wl-grey); font-weight: 700;
 }
 .wl-kicker::before { content: ""; width: 22px; height: 2px; background: var(--wl-orange); display: inline-block; }
-.wl-h2 { font-size: clamp(20px, 4vw, 28px); line-height: 1.12; font-weight: 800; margin: 10px 0 6px; }
-.wl-sub { color: var(--wl-grey); font-size: var(--clmc-text-medium, 16px); margin: 0 0 22px; max-width: 640px; }
+.wl-h2 { font-size: clamp(26px, 4vw, 32px); line-height: 1.12; font-weight: 800; margin: 10px 0 6px; }
+.wl-sub { color: var(--wl-grey); font-size: var(--clmc-text-medium, 16px); margin: 16px 0 0; max-width: 640px; }
 
 /* ---------- botones (mismos colores/pesos clmc) ---------- */
 .wl-btn {
@@ -267,7 +272,7 @@ a { color: inherit; text-decoration: none; }
 /* alineado al margen del header (mismo padding grande, 32px), a lo ancho: en monitores grandes el texto va pegado al margen del menu y el arte llena todo */
 .wl-h888__inner { width: 100%; padding: 0 90px; }
 .wl-h888__text { max-width: 460px; }
-.wl-h888__title { font-size: clamp(24px, 3.3vw, 40px); line-height: 1.07; font-weight: 800; margin: 0 0 12px; letter-spacing: -0.01em; }
+.wl-h888__title { font-size: clamp(24px, 3.3vw, 40px); line-height: 1.07; font-weight: 800; margin: 0 0 16px; letter-spacing: -0.01em; }
 .wl-h888__sub { color: #e6e6e6; font-size: clamp(15px, 1.7vw, 18px); line-height: 1.45; margin: 0 0 22px; max-width: 400px; }
 .wl-h888__ctas { display: flex; gap: 12px; flex-wrap: wrap; }
 
@@ -282,7 +287,8 @@ a { color: inherit; text-decoration: none; }
 .wl-hero888 .splide__arrow[disabled] { opacity: 0 !important; }
 
 /* bullets ovalados (estilo casino) con RELLENO de progreso del autoplay, debajo con espaciado */
-.wl-hero888 .splide__pagination { position: static; display: flex; justify-content: center; gap: 8px; padding: 16px 0 4px; margin: 0; }
+.wl-hero888 .splide__pagination { position: static; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 16px 0 4px; margin: 0; }
+.wl-hero888 .splide__pagination li { display: flex; align-items: center; line-height: 0; }
 .wl-hero888 .splide__pagination__page {
   position: relative; overflow: hidden; width: 9px; height: 9px; border-radius: 5px; margin: 0;
   opacity: 1; transform: none; background: rgba(255,255,255,0.32);
@@ -506,8 +512,8 @@ a { color: inherit; text-decoration: none; }
   .wl-picker__inner { grid-template-columns: 0.9fr 1.1fr; align-items: center; padding: 34px 36px; }
 }
 .wl-picker__left .wl-kicker { margin-bottom: 8px; }
-.wl-picker__left .wl-h2 { margin: 0 0 6px; }
-.wl-picker__left .wl-sub { margin: 0 0 16px; }
+.wl-picker__left .wl-h2 { margin: 0 0 16px; }
+.wl-picker__left .wl-sub { margin: 0 0 40px; }
 .wl-picker__result {
   display: inline-flex; align-items: center; gap: 12px;
   background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.12);
@@ -589,7 +595,7 @@ a { color: inherit; text-decoration: none; }
   font-size: var(--clmc-text-xsmall, 12px); font-weight: 700;
   border-radius: 999px; padding: 2px 10px;
 }
-.wl-see-all { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; display: inline-flex; align-items: center; gap: 6px; }
+.wl-see-all { font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; display: inline-flex; align-items: center; gap: 6px; }
 .wl-see-all:hover { color: var(--wl-orange-soft); }
 
 .wl-machine { position: relative; border-radius: var(--wl-radius-s); }
@@ -682,7 +688,7 @@ a { color: inherit; text-decoration: none; }
 .wl-live-grid { position: relative; z-index: 1; }
 
 /* ---------- juguetes físicos interactivos (ficha / balón) ---------- */
-.wl-toy-zone { position: absolute; inset: 0; overflow: hidden; pointer-events: none; z-index: 3; }
+.wl-toy-zone { position: absolute; inset: 0; overflow: hidden; pointer-events: none; z-index: 40; }
 .wl-toy {
   position: absolute; top: 0; left: 0;
   pointer-events: auto; cursor: grab; touch-action: none;
@@ -882,16 +888,18 @@ a { color: inherit; text-decoration: none; }
   display: flex; align-items: flex-end; justify-content: space-between; gap: 16px;
   width: 100%; max-width: 1280px; margin: 0 auto; padding: 0 16px 34px;
 }
-@media (min-width: 900px) { .wl-slotgal__head { padding: 0 32px 34px; } }
+@media (min-width: 900px) { .wl-slotgal__head { padding: 0 32px 40px; } }
 .wl-slotgal__head .wl-h2 { color: #17110c; margin: 0; }
-.wl-slotgal__head .wl-sub { color: #6f665b; margin: 6px 0 0; }
+.wl-slotgal__head .wl-sub { color: #6f665b; margin: 16px 0 0; }
 .wl-slotgal .wl-see-all { color: var(--wl-orange); }
 .wl-slotgal .wl-machine { box-shadow: 0 14px 30px rgba(20, 14, 8, 0.14); border-radius: var(--wl-radius-s); }
 
 .wl-slotgal__wrap { position: relative; }
 .wl-slotgal__scroller {
   display: flex; gap: 20px; align-items: center;
-  overflow-x: auto; padding: 24px 32px 24px; scrollbar-width: none;
+  overflow-x: auto; overflow-y: hidden; padding: 24px 32px 24px; scrollbar-width: none;
+  touch-action: pan-x; /* al arrastrar con el dedo NO dispara scroll vertical */
+  overscroll-behavior-x: contain;
 }
 .wl-slotgal__scroller::-webkit-scrollbar { display: none; }
 /* tamaños VARIADOS (unos más grandes, unos más chicos) + onda sutil */
@@ -1023,8 +1031,8 @@ a { color: inherit; text-decoration: none; }
     flex-direction: column; align-items: flex-start; gap: 16px;
   }
   /* los subs traen margin inline (6px) → se sube con !important */
-  .wl-row-head .wl-sub, .wl-top10__head .wl-sub, .wl-slotgal__head .wl-sub { margin-top: 10px !important; }
-  .wl-see-all { font-size: 13px; }
+  .wl-row-head .wl-sub, .wl-top10__head .wl-sub, .wl-slotgal__head .wl-sub { margin-top: 16px !important; }
+  .wl-see-all { font-size: 14px; }
 
   /* MÓVIL: sin flechas en los carruseles Splide — el control es con el dedo */
   .wl-top10__slider .splide__arrow,
@@ -1104,4 +1112,17 @@ a { color: inherit; text-decoration: none; }
   .wl-evrow__item:hover .wl-ev::after,
   .wl-live-card:hover::after,
   .wl-promo-card:hover::after { animation: none; background: none; box-shadow: inset 0 0 0 1.5px rgba(232,91,16,0.55); }
+}
+
+/* #6 — Navbar inferior pegado al borde real del dispositivo.
+   En móvil, la barra dinámica del navegador y el "home indicator" dejaban un hueco
+   bajo el nav. Con safe-area el fondo del nav se extiende hasta el borde y no queda
+   ese espacio. (El mostrar/ocultar la barra del navegador al hacer scroll lo controla
+   el propio navegador; esto elimina el hueco del fondo.) */
+@media (max-width: 899px) {
+  .clmc-mobile-navigation {
+    position: fixed !important; left: 0 !important; right: 0 !important; bottom: 0 !important;
+    padding-bottom: env(safe-area-inset-bottom, 0px) !important;
+    box-sizing: content-box;
+  }
 }

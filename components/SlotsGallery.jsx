@@ -77,7 +77,7 @@ export default function SlotsGallery() {
       <div className="wl-slotgal__head">
         <div>
           <h2 className="wl-h2" style={{ margin: 0 }}>Tragamonedas que no paran</h2>
-          <p className="wl-sub" style={{ margin: '6px 0 0' }}>Cientos de slots, jackpots y crash games. Desliza y elige tu favorito.</p>
+          <p className="wl-sub" style={{ margin: '16px 0 0' }}>Cientos de slots, jackpots y crash games. Desliza y elige tu favorito.</p>
         </div>
         <a className="wl-see-all" href="#" onClick={dead}>
           Ver todos los slots

@@ -22,7 +22,7 @@ export default function Promos() {
       <div className="wl-row-head wl-reveal">
         <div>
           <h2 className="wl-h2" style={{ margin: 0 }}>Bonos y promociones</h2>
-          <p className="wl-sub" style={{ margin: '6px 0 0' }}>Bono de bienvenida, giros gratis y recargas para sacarle más a cada jugada.</p>
+          <p className="wl-sub" style={{ margin: '16px 0 0' }}>Bono de bienvenida, giros gratis y recargas para sacarle más a cada jugada.</p>
         </div>
         <a className="wl-see-all" href="#" onClick={dead}>
           Ver todas las promociones

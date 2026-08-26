@@ -15,13 +15,13 @@ export default function Document() {
         <link rel="stylesheet" href="/prod/emotion.css" />
         <link rel="stylesheet" href="/prod/winland-prod.css" />
         <link rel="icon" href="/assets/img/favicon.png" sizes="any" />
-        {/* Fuente display definitiva: SORA (titulares · header · CTAs · títulos del footer).
+        {/* Fuente display: BARLOW (titulares · header · CTAs · títulos del footer).
             El cuerpo de texto sigue en Denim INK. */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link
           rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Barlow:wght@500;600;700;800&display=swap"
         />
       </Head>
       <body>

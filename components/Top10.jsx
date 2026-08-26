@@ -45,7 +45,7 @@ export default function Top10() {
       <div className="wl-top10__head wl-reveal">
         <div>
           <h2 className="wl-h2" style={{ margin: 0 }}>Top 10 de juegos</h2>
-          <p className="wl-sub" style={{ margin: '6px 0 0' }}>Los juegos y slots más jugados del casino esta semana.</p>
+          <p className="wl-sub" style={{ margin: '16px 0 0' }}>Los juegos y slots más jugados del casino esta semana.</p>
         </div>
         <a className="wl-see-all" href="#" onClick={(e) => e.preventDefault()}>
           Ver todo el casino <Chevron />

@@ -130,7 +130,7 @@ export default function MatchCards() {
       <div className="wl-row-head wl-reveal">
         <div>
           <h2 className="wl-h2" style={{ margin: 0 }}>Eventos deportivos destacados</h2>
-          <p className="wl-sub" style={{ margin: '6px 0 0' }}>Los partidos más esperados de la Liga MX y las grandes ligas del mundo.</p>
+          <p className="wl-sub" style={{ margin: '16px 0 0' }}>Los partidos más esperados de la Liga MX y las grandes ligas del mundo.</p>
         </div>
         <a className="wl-see-all" href="#" onClick={dead}>
           Todos los deportes
