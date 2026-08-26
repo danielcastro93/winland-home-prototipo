@@ -71,7 +71,7 @@ export default function Home() {
         <meta property="og:url" content="https://www.winland.com.mx/" />
         <meta property="og:image" content="https://www.winland.com.mx/cms/img/promotions/CUPON2026/CUPON2026_L_1.jpg" />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(JSONLD) }} />
       </Head>
 

@@ -140,7 +140,7 @@ nextjs-portal, #__next-dev-tools-indicator, [data-next-badge-root], [data-nextjs
 /* mobile: el footer reserva espacio para que los legales nunca queden bajo la burbuja */
 @media (max-width: 899px) { .clmc-footer { padding-bottom: 92px; } }
 /* mobile: por encima del bottom-nav y con aire extra para no tapar los legales */
-@media (max-width: 899px) { .wl-chat { bottom: calc(74px + env(safe-area-inset-bottom, 0px)); } .wl-chat__bubble { width: 54px; height: 54px; } .wl-chat__bubble svg { width: 30px; height: 30px; } .wl-chat__label { display: none; } }
+@media (max-width: 899px) { .wl-chat { bottom: calc(92px + env(safe-area-inset-bottom, 0px)); } .wl-chat__bubble { width: 54px; height: 54px; } .wl-chat__bubble svg { width: 30px; height: 30px; } .wl-chat__label { display: none; } }
 
 /* ---------- CUPÓN (simulación de la barra del betslip de Altenar) ----------
    Oculto de inicio; aparece al tocar una cuota. Ver BetSlip.jsx para la nota de
