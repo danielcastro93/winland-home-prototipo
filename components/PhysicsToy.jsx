@@ -38,7 +38,7 @@ const toyFallback = (e) => {
 
 const PRESET = {
   chip: { size: 84, grav: 0, rest: 0.6, air: 0.975, spin: 1.7, home: [0.945, 0.09], homeM: [0.9, 0.01], anchor: 'content-right' },
-  ball: { size: 62, grav: 0.5, rest: 0.7, air: 0.996, spin: 1.0, home: [0.93, 0.06], homeM: [0.9, 0.02] },
+  ball: { size: 62, grav: 0.5, rest: 0.7, air: 0.996, spin: 1.0, home: [0.9, 0.85], homeM: [0.85, 0.8] },
 };
 
 export default function PhysicsToy({ type = 'chip', label }) {
@@ -71,6 +71,7 @@ export default function PhysicsToy({ type = 'chip', label }) {
           y1: gr.top - gz.top + gr.height * 0.18,            // bajo el travesaño (más alto)
           y2: gr.top - gz.top + gr.height * 0.96,            // sobre el suelo (más bajo)
         };
+        S.groundY = gr.bottom - gz.top;                      // línea de piso = base real de la portería
       }
     };
     const homeXY = () => {
@@ -85,18 +86,20 @@ export default function PhysicsToy({ type = 'chip', label }) {
       } else {
         hx = S.W * home[0];
       }
-      return [Math.min(Math.max(hx, r), S.W - r), Math.min(Math.max(S.H * home[1], r), S.H - r)];
+      // el balón reposa a RAS DE PISO, alineado con la base real de la portería; el resto usa fracción
+      const hy = (isBall && S.groundY) ? S.groundY - r : S.H * home[1];
+      return [Math.min(Math.max(hx, r), S.W - r), Math.min(Math.max(hy, r), S.H - r)];
     };
     const apply = () => { toy.style.transform = `translate3d(${S.x - r}px, ${S.y - r}px, 0) rotate(${S.ang}deg)`; };
     const placeHint = () => {
       if (!hintRef.current) return;
       const [hx, hy] = homeXY();
       const el = hintRef.current;
-      el.style.left = `${hx}px`;
-      el.style.top = `${hy}px`;
-      // clamp horizontal: el globito respeta los márgenes de la pantalla
       const w = el.offsetWidth || 90;
-      el.style.left = `${Math.min(Math.max(hx, w / 2 + 12), S.W - w / 2 - 12)}px`;
+      // globito SIEMPRE a la IZQUIERDA del juguete (cola apuntando a la derecha),
+      // centrado verticalmente con él. Si no cabe, se recorta al margen izquierdo.
+      el.style.left = `${Math.max(8, hx - r - 14 - w)}px`;
+      el.style.top = `${hy}px`;
     };
     const place = () => { measure(); const [hx, hy] = homeXY(); S.x = hx; S.y = hy; apply(); placeHint(); };
     const vibrate = (n) => { if (!S.reduced && navigator.vibrate) try { navigator.vibrate(n); } catch (e) {} };
@@ -152,7 +155,11 @@ export default function PhysicsToy({ type = 'chip', label }) {
         const [hx, hy] = homeXY();
         S.x += (hx - S.x) * 0.08; S.y += (hy - S.y) * 0.08; S.ang *= 0.9;
         apply();
-        if (Math.abs(hx - S.x) < 0.6 && Math.abs(hy - S.y) < 0.6) { S.x = hx; S.y = hy; S.ang = 0; apply(); S.phase = 'rest'; return; }
+        if (Math.abs(hx - S.x) < 0.6 && Math.abs(hy - S.y) < 0.6) {
+          S.x = hx; S.y = hy; S.ang = 0; apply(); S.phase = 'rest';
+          zone.classList.remove('wl-toy-zone--played'); // vuelve a su lugar → retoma anim + reaparece el globito
+          return;
+        }
         S.raf = requestAnimationFrame(step); return;
       }
       if (S.phase !== 'fly') return; // held/rest: no loop

@@ -1,6 +1,6 @@
-// Card de juego REAL de producción (.clmc-machine) con el hover de barrido naranja
-// idéntico al sitio. Reutilizada en el Top 10 y en la galería de slots.
-// Con `rank` muestra el número gigante (estilo .clmc-machine-top-rank de prod).
+// Card de juego (.clmc-machine, design system Calimaco) con hover de barrido naranja.
+// Reutilizada en el Top 10 y en la galería de slots.
+// Con `rank` muestra el número gigante de posición (estilo .clmc-machine-top-rank).
 import { thumb } from '../lib/data';
 
 const GLOW = {

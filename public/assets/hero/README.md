@@ -1,22 +1,21 @@
 # Assets del HERO (banner principal)
 
-**Medida única: 1920 × 600 px** (para imagen y video).
+**Escritorio: 1920 × 600 px** (imagen o video). **Celular: 1200 × 750 px** (versión `-mobile`).
 
 ## Archivos actuales
-- `slide-1-casino.jpg`            → Banner 1 (Casino). Imagen 1920×600.
-- `slide-2-deportes.mp4`          → Banner 2 (Deportes). Video 1920×600.
-- `slide-2-deportes-poster.jpg`   → Póster del video (1920×600), se muestra mientras carga.
+- `slide-1-casino.jpg` / `slide-1-casino-mobile.jpg` → Banner 1 (Casino). Imagen.
+- `slide-2-deportes.mp4` / `slide-2-deportes-mobile.mp4` → Banner 2 (Deportes). Video.
+- `slide-2-deportes.jpg` / `slide-2-deportes-mobile.jpg` → Imagen de respaldo del video, se muestra mientras carga o si no se reproduce.
 
-## Para REEMPLAZAR un banner (sin tocar código)
-Sobrescribe el archivo en esta carpeta con el **mismo nombre**. Ej.: pon tu nueva
-imagen de casino como `slide-1-casino.jpg` (1920×600) y listo.
+## Para REEMPLAZAR un banner
+Sobrescribe el archivo en esta carpeta con el **mismo nombre** y la misma medida.
 
 ## Para AGREGAR o cambiar textos/CTA
 Edita el arreglo `SLIDES` en `components/Hero.jsx` (una entrada por banner).
-- Imagen:  `{ kind: 'image', src: '/assets/hero/tu-archivo.jpg', title, sub, ctas }`
-- Video:   `{ kind: 'video', src: '/assets/hero/tu-archivo.mp4', poster: '/assets/hero/tu-poster.jpg', title, sub, ctas }`
+- Imagen: `{ kind: 'image', src, srcMobile, title, sub, ctas }`
+- Video: `{ kind: 'video', src, poster, srcMobile, posterMobile, title, sub, ctas }` (`poster` es la imagen de respaldo)
 
 ## Specs recomendadas
-- Imagen: JPG o WEBP, 1920×600, sujeto/arte hacia la derecha (el copy va a la izquierda).
-- Video: MP4 (H.264), 1920×600, ≤8s, silenciado, <1 MB, en loop. Siempre con póster.
-- Móvil: se recorta automáticamente; si quieres arte móvil dedicado, pídelo aparte.
+- Imagen: JPG o WEBP, sujeto o arte hacia la derecha (el texto va a la izquierda).
+- Video: MP4 (H.264), silenciado, en loop, breve (10 a 15 s) y ligero. Siempre con imagen de respaldo.
+- El primer banner siempre debe ser imagen; el video va del segundo en adelante.

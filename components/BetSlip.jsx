@@ -1,10 +1,10 @@
 // CUPÓN — SIMULACIÓN de la barra del boleto de apuesta.
-// Comportamiento (como producción): OCULTO de inicio; cuando el usuario toca una cuota
+// Comportamiento: OCULTO de inicio; cuando el usuario toca una cuota
 // en "Eventos deportivos destacados" aparece la barra naranja anclada abajo-derecha con
 // el contador de selecciones y la CUOTA TOTAL (producto de las cuotas). No se expande:
 // es solo visual, para comunicar que el boleto vive también en el home.
 //
-// >>> EN INTEGRACIÓN: ELIMINAR este componente. Aquí va el CUPÓN REAL de producción
+// >>> EN INTEGRACIÓN: ELIMINAR este componente. Aquí va el cupón del SDK de apuestas
 // >>> (Altenar WSDK · WBetslipOverlay, el mismo de /deportes): al montar el widget,
 // >>> las selecciones de las cuotas caen a él automáticamente y él pinta la barra,
 // >>> el panel, el flujo de apuesta completo y "Mis apuestas".

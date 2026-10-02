@@ -1,6 +1,6 @@
-// Header, Footer y BottomNav — marcado del chrome del sitio, renderizado tal cual.
+// Header, Footer y BottomNav — chrome del sitio con el design system Calimaco (clmc-*).
 // Todos los enlaces están neutralizados a "#" (ver lib/frags.js).
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { headerHTML, footerHTML, bottomNavHTML } from '../lib/frags';
 
 // Evita que los "#" muevan el scroll.
@@ -10,18 +10,81 @@ function useDeadLinks() {
   }, []);
 }
 
-export function Header() {
-  const onClick = useDeadLinks();
-  return <div onClick={onClick} dangerouslySetInnerHTML={{ __html: headerHTML() }} />;
+// Desplegables del menú (propuesta): UNO solo abierto a la vez. Se abre al pasar el
+// cursor, con el teclado (focus) o con un toque, y se cierra con una pequeña espera al
+// salir para que el cursor pueda bajar al panel sin que se cierre.
+// Los eventos se escuchan en el CONTENEDOR del header (delegación), no en cada
+// desplegable: así siguen funcionando aunque el HTML interno se vuelva a pintar.
+function useSingleDropdown(ref, enabled) {
+  useEffect(() => {
+    const root = ref.current;
+    if (!enabled || !root) return undefined;
+    let timer = 0;
+    const setOpen = (dd) => {
+      clearTimeout(timer);
+      root.querySelectorAll('.wl-dd').forEach((d) => {
+        const on = d === dd;
+        d.classList.toggle('is-open', on);
+        d.querySelector('.wl-dd__trigger')?.setAttribute('aria-expanded', String(on));
+      });
+    };
+    const closeSoon = () => { clearTimeout(timer); timer = setTimeout(() => setOpen(null), 160); };
+    const ddOf = (el) => (el instanceof Element ? el.closest('.wl-dd') : null);
+    const onOver = (e) => { const dd = ddOf(e.target); if (dd) setOpen(dd); };
+    const onOut = (e) => { const dd = ddOf(e.target); if (dd && !dd.contains(e.relatedTarget)) closeSoon(); };
+    const onFocusIn = (e) => { const dd = ddOf(e.target); if (dd) setOpen(dd); };
+    const onFocusOut = (e) => { const dd = ddOf(e.target); if (dd && !dd.contains(e.relatedTarget)) closeSoon(); };
+    // en pantallas táctiles el primer toque abre el panel; el segundo navega
+    const onTouch = (e) => {
+      const trigger = e.target instanceof Element ? e.target.closest('.wl-dd__trigger') : null;
+      const dd = ddOf(trigger);
+      if (dd && !dd.classList.contains('is-open')) { e.preventDefault(); setOpen(dd); }
+    };
+    const onKey = (e) => { if (e.key === 'Escape') setOpen(null); };
+    root.addEventListener('mouseover', onOver);
+    root.addEventListener('mouseout', onOut);
+    root.addEventListener('focusin', onFocusIn);
+    root.addEventListener('focusout', onFocusOut);
+    root.addEventListener('touchend', onTouch);
+    document.addEventListener('keydown', onKey);
+    return () => {
+      clearTimeout(timer);
+      root.removeEventListener('mouseover', onOver);
+      root.removeEventListener('mouseout', onOut);
+      root.removeEventListener('focusin', onFocusIn);
+      root.removeEventListener('focusout', onFocusOut);
+      root.removeEventListener('touchend', onTouch);
+      document.removeEventListener('keydown', onKey);
+    };
+  }, [ref, enabled]);
 }
 
-export function Footer() {
+export function Header({ propuesta = false }) {
   const onClick = useDeadLinks();
-  return <div onClick={onClick} dangerouslySetInnerHTML={{ __html: footerHTML() }} />;
+  const ref = useRef(null);
+  useSingleDropdown(ref, propuesta);
+  return <div ref={ref} onClick={onClick} dangerouslySetInnerHTML={{ __html: headerHTML(propuesta) }} />;
 }
 
-export function BottomNav() {
+// En la propuesta, `logos` elige la variante del cinturón de logos: 'chip' (cada logo
+// en una pastilla blanca) o 'color' (a color directo sobre el fondo negro).
+export function Footer({ propuesta = false, logos = 'chip' }) {
   const onClick = useDeadLinks();
+  const cls = propuesta ? `wl-footer-p wl-footer-p--${logos}` : undefined;
+  return <div className={cls} onClick={onClick} dangerouslySetInnerHTML={{ __html: footerHTML(propuesta, logos) }} />;
+}
+
+// `onMenu` (solo en la propuesta): el botón "Menú" abre el menú lateral.
+export function BottomNav({ onMenu }) {
+  const dead = useDeadLinks();
+  const onClick = (e) => {
+    if (onMenu && e.target.closest('.clmc-mobile-menu-option [aria-haspopup="true"]')) {
+      e.preventDefault();
+      onMenu();
+      return;
+    }
+    dead(e);
+  };
   return (
     <div className="wl-only-mobile" onClick={onClick} dangerouslySetInnerHTML={{ __html: bottomNavHTML() }} />
   );

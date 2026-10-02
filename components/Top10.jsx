@@ -1,6 +1,6 @@
-// CASINO — Top 10 de juegos (lobby real CASINO1 del CMS). Card real de producción
-// + número de posición gigante + hover de barrido (igual que prod). Muestra ~5 y el
-// resto en carrusel. Va sobre un fondo de marca (no todo negro) con monedas flotando.
+// CASINO — Top 10 de juegos (lobby CASINO1 del CMS). Card del design system Calimaco
+// + número de posición gigante + hover de barrido. Muestra ~5 y el resto en carrusel.
+// Va sobre un fondo de marca (no todo negro) con monedas flotando.
 import { useState } from 'react';
 import { Splide, SplideSlide } from '@splidejs/react-splide';
 import MachineCard from './MachineCard';

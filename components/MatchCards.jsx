@@ -4,7 +4,6 @@
 // viewport los cards están APILADOS y se despliegan a su posición en la fila; al pasar
 // el cursor el card se levanta y se destaca, atenuando el resto.
 import { useState, useEffect, useCallback } from 'react';
-import { ligaLogo } from '../lib/data';
 import { useInView } from '../lib/hooks';
 import PhysicsToy from './PhysicsToy';
 
@@ -29,6 +28,10 @@ const EVENTS = [
 ];
 
 const CARD_STEP = 284; // ancho card + gap (para apilar al centro)
+
+// corta nombres de liga largos (p. ej. "Bundesliga", "Serie A", "Concacaf Champions")
+// para que el encabezado de la card no se desborde con textos grandes.
+const truncate = (s, n) => (s && s.length > n ? `${s.slice(0, n - 1).trimEnd()}…` : s);
 
 const BallIcon = () => <span className="wl-ev__ball" aria-hidden="true">⚽</span>;
 const StatsIcon = () => (
@@ -66,8 +69,8 @@ function EventCard({ ev }) {
         <span className="wl-ev__meta">
           <BallIcon />
           <span className="wl-ev__date">{ev.date}</span>
-          <img className="wl-ev__liga" src={ligaLogo} alt="" aria-hidden="true" />
-          <span className="wl-ev__ligatxt">Liga MX</span>
+          <span className="wl-ev__sep" aria-hidden="true">·</span>
+          <span className="wl-ev__ligatxt">{truncate(ev.league || 'Liga MX', 18)}</span>
         </span>
         <StatsIcon />
       </div>

@@ -74,8 +74,13 @@ nextjs-portal, #__next-dev-tools-indicator, [data-next-badge-root], [data-nextjs
 .wl-popup__close:hover { background: var(--wl-orange); color: #fff; transform: scale(1.08); }
 @media (max-width: 620px) { .wl-popup__close { top: 10px; right: 10px; } }
 
-/* ---------- SPACE GROTESK: titulares, header, CTAs y títulos del footer; cuerpo en Denim ----------
-   !important: la CSS de producción fuerza font-family winland !important en headings */
+/* ---------- TIPOGRAFÍA GLOBAL: Barlow en TODO el sitio ----------
+   El design system base trae un `* { font-family: winland !important }` que gana por
+   !important. Lo revertimos con una regla más específica (html body *) para que todo
+   —títulos, textos, botones, header, footer y navegación inferior— use Barlow. Los
+   íconos (clases con su propia familia !important) conservan su fuente. Debajo se
+   afinan pesos y tracking por elemento. */
+html body, html body * { font-family: 'Barlow', var(--clmc-font, winland), system-ui, sans-serif !important; }
 .wl-h2, .wl-h888__title { font-family: 'Barlow', var(--clmc-font, winland), system-ui, sans-serif !important; letter-spacing: 0.005em; }
 .wl-h888__title { font-weight: 700 !important; }  /* H1: bold */
 .wl-h2 { font-weight: 600 !important; }            /* H2: semibold */
@@ -88,6 +93,8 @@ nextjs-portal, #__next-dev-tools-indicator, [data-next-badge-root], [data-nextjs
 .wl-see-all { font-family: 'Barlow', var(--clmc-font, winland), system-ui, sans-serif !important; font-weight: 600 !important; }
 /* títulos del footer (¿Necesitas ayuda?, Legales, Ajustes, Más información sobre Winland) */
 .clmc-footer-title, .clmc-footer h3, .clmc-footer h4 { font-family: 'Barlow', var(--clmc-font, winland), system-ui, sans-serif !important; }
+/* etiquetas de la navegación inferior (Menu, Deportes, En vivo, Mis apuestas, Casino) */
+.clmc-mobile-navigation p { font-family: 'Barlow', var(--clmc-font, winland), system-ui, sans-serif !important; font-weight: 600 !important; }
 
 /* ---------- CHAT flotante — placeholder del launcher REAL de producción ----------
    En prod el chat es el widget global de Zendesk (iframe #launcher, burbuja flotante
@@ -140,7 +147,10 @@ nextjs-portal, #__next-dev-tools-indicator, [data-next-badge-root], [data-nextjs
 /* mobile: el footer reserva espacio para que los legales nunca queden bajo la burbuja */
 @media (max-width: 899px) { .clmc-footer { padding-bottom: 92px; } }
 /* mobile: por encima del bottom-nav y con aire extra para no tapar los legales */
-@media (max-width: 899px) { .wl-chat { bottom: calc(92px + env(safe-area-inset-bottom, 0px)); } .wl-chat__bubble { width: 54px; height: 54px; } .wl-chat__bubble svg { width: 30px; height: 30px; } .wl-chat__label { display: none; } }
+/* En móvil/tablet la burbuja de chat NO va: la navegación inferior trae el MENÚ que
+   abre el sidebar del sitio, donde ya vive el chat. La burbuja solo se usa en escritorio,
+   donde el home no monta ese sidebar. */
+@media (max-width: 899px) { .wl-chat { display: none !important; } }
 
 /* ---------- CUPÓN (simulación de la barra del betslip de Altenar) ----------
    Oculto de inicio; aparece al tocar una cuota. Ver BetSlip.jsx para la nota de
@@ -209,7 +219,7 @@ a { color: inherit; text-decoration: none; }
 .wl-match-slider:hover .splide__arrow:not([disabled]),
 .wl-promo-slider:hover .splide__arrow:not([disabled]) { opacity: 1 !important; pointer-events: auto; }
 .wl-section { position: relative; padding: 40px 16px; max-width: 1280px; margin: 0 auto; }
-@media (min-width: 900px) { .wl-section { padding: 56px 32px; } }
+@media (min-width: 900px) { .wl-section { padding: 100px 32px; } }
 
 /* reveal cinematográfico: entra con leve escala + desenfoque (one-shot, GPU) */
 .wl-reveal { opacity: 0; transform: translateY(26px) scale(0.985); filter: blur(5px); transition: opacity 0.7s ease, transform 0.7s cubic-bezier(0.16, 1, 0.3, 1), filter 0.7s ease; }
@@ -240,7 +250,7 @@ a { color: inherit; text-decoration: none; }
 }
 .wl-kicker::before { content: ""; width: 22px; height: 2px; background: var(--wl-orange); display: inline-block; }
 .wl-h2 { font-size: clamp(26px, 4vw, 32px); line-height: 1.12; font-weight: 800; margin: 10px 0 6px; }
-.wl-sub { color: var(--wl-grey); font-size: var(--clmc-text-medium, 16px); margin: 16px 0 0; max-width: 640px; }
+.wl-sub { color: var(--wl-grey); font-size: 16px; margin: 16px 0 0; max-width: 640px; }
 
 /* ---------- botones (mismos colores/pesos clmc) ---------- */
 .wl-btn {
@@ -264,34 +274,48 @@ a { color: inherit; text-decoration: none; }
 .wl-h888 { position: relative; width: 100%; height: min(31.25vw, 600px); overflow: hidden; }  /* full-width real; alto ~1920:600 topado a 640 (no encoge el ancho como aspect-ratio) */
 .wl-h888__media { position: absolute; inset: 0; }
 .wl-h888__bg { width: 100%; height: 100%; object-fit: cover; object-position: 85% center; display: block; }
+.wl-h888__bg--m { display: none; }  /* la imagen móvil solo se muestra en móvil (ver media query) */
 .wl-h888__scrim {
   position: absolute; inset: 0; z-index: 1;
+  /* slides OSCUROS: degradado lateral para legibilidad del texto blanco */
   background: linear-gradient(90deg, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.66) 24%, rgba(0,0,0,0.12) 50%, transparent 64%);
 }
+/* slides CLAROS (imagen nueva con lado blanco + fundido a negro en el ARTE): sin scrim,
+   el degradado lo trae la propia imagen. */
+.wl-h888--light .wl-h888__scrim { display: none; }
 .wl-h888__content { position: absolute; inset: 0; display: flex; align-items: center; z-index: 2; }
 /* alineado al margen del header (mismo padding grande, 32px), a lo ancho: en monitores grandes el texto va pegado al margen del menu y el arte llena todo */
 .wl-h888__inner { width: 100%; padding: 0 90px; }
 .wl-h888__text { max-width: 460px; }
-.wl-h888__title { font-size: clamp(24px, 3.3vw, 40px); line-height: 1.07; font-weight: 800; margin: 0 0 16px; letter-spacing: -0.01em; }
-.wl-h888__sub { color: #e6e6e6; font-size: clamp(15px, 1.7vw, 18px); line-height: 1.45; margin: 0 0 22px; max-width: 400px; }
+.wl-h888__title { color: #fff; font-size: 48px; line-height: 1.05; font-weight: 800; margin: 0 0 16px; letter-spacing: -0.015em; }
+.wl-h888__sub { color: #e6e6e6; font-size: clamp(16px, 1.7vw, 18px); line-height: 1.45; margin: 0 0 22px; max-width: 400px; }
+/* slides CLAROS: título naranja + texto gris (sobre el lado blanco de la imagen) */
+.wl-h888--light .wl-h888__title { color: var(--wl-orange); }
+.wl-h888--light .wl-h888__sub { color: #555555; }
 .wl-h888__ctas { display: flex; gap: 12px; flex-wrap: wrap; }
+/* CTA secundario en slides CLAROS: chip blanco + texto/borde naranja (se lee sobre la imagen).
+   En slides oscuros usa el ghost base (contorno + texto blanco). */
+.wl-h888--light .wl-h888__ctas .wl-btn--ghost { background: #ffffff; color: var(--wl-orange); border: 1.5px solid var(--wl-orange); }
+.wl-h888--light .wl-h888__ctas .wl-btn--ghost:hover { background: #fff4ee; border-color: var(--wl-orange); }
 
 /* flechas: alineadas al margen del header (32px) y visibles SOLO al hover (desktop) */
-.wl-hero888 .splide__arrow { background: rgba(0,0,0,0.5); width: 42px; height: 42px; opacity: 0 !important; transition: opacity 0.25s ease, background 0.2s; }
+.wl-hero888 .splide__arrow { background: rgba(232, 91, 16, 0.5) !important; backdrop-filter: blur(6px); width: 42px; height: 42px; opacity: 0 !important; transition: opacity 0.25s ease, background 0.2s; }
 /* aparecen SOLO cuando el cursor esta sobre la imagen/video (clase por JS, geometria del track) */
 .wl-hero888.wl-show-arrows .splide__arrow { opacity: 1 !important; }
-.wl-hero888 .splide__arrow:hover { background: rgba(0,0,0,0.82); }
+.wl-hero888 .splide__arrow:hover { background: var(--wl-orange) !important; }
 .wl-hero888 .splide__arrow svg { fill: #fff; width: 15px; height: 15px; }
 .wl-hero888 .splide__arrow--prev { left: 32px; }
 .wl-hero888 .splide__arrow--next { right: 32px; }
 .wl-hero888 .splide__arrow[disabled] { opacity: 0 !important; }
 
 /* bullets ovalados (estilo casino) con RELLENO de progreso del autoplay, debajo con espaciado */
-.wl-hero888 .splide__pagination { position: static; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 16px 0 4px; margin: 0; }
+/* desktop: bullets SOBRE la imagen (no ocupan alto → el Top 10 sube) */
+.wl-hero888 .splide__pagination { position: absolute; bottom: 18px; left: 0; right: 0; z-index: 3; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 0; margin: 0; }
 .wl-hero888 .splide__pagination li { display: flex; align-items: center; line-height: 0; }
 .wl-hero888 .splide__pagination__page {
   position: relative; overflow: hidden; width: 9px; height: 9px; border-radius: 5px; margin: 0;
-  opacity: 1; transform: none; background: rgba(255,255,255,0.32);
+  opacity: 1; transform: none; background: rgba(232, 91, 16, 0.55);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.35);
   transition: width 0.3s ease, background 0.3s ease;
 }
 .wl-hero888 .splide__pagination__page.is-active { width: 34px; background: rgba(232, 91, 16, 0.3); }
@@ -299,19 +323,44 @@ a { color: inherit; text-decoration: none; }
   content: ""; position: absolute; inset: 0; background: var(--wl-orange);
   transform: scaleX(var(--wl-fill, 0)); transform-origin: left center;
 }
+/* AUTO-CONTRASTE: fondo OSCURO detectado por JS → bullets blancos (el relleno sigue naranja).
+   Sin la clase = fondo claro → bullets naranja (default de arriba). */
+.wl-hero888 .splide__pagination.wl-pag-dark .splide__pagination__page { background: rgba(255,255,255,0.5); }
+.wl-hero888 .splide__pagination.wl-pag-dark .splide__pagination__page.is-active { background: rgba(255,255,255,0.32); }
 
-/* MÓVIL: media como primer bloque, texto+CTA DEBAJO; sin flechas, solo bullets */
-@media (max-width: 760px) {
+/* MÓVIL Y TABLETS (incl. TODOS los iPads): media como primer bloque, texto+CTA DEBAJO
+   (evita que el texto se encime con la imagen); sin flechas, solo bullets.
+   · max-width 1024px → iPad mini/Air/Pro en vertical + móvil + ventanas angostas.
+   · 1025–1366px con (pointer: coarse) → iPads grandes en horizontal (táctiles), sin
+     afectar laptops (que tienen pointer: fine). */
+@media (max-width: 1024px), (min-width: 1025px) and (max-width: 1366px) and (pointer: coarse) {
   .wl-h888 { height: auto; display: flex; flex-direction: column; }
   .wl-h888__media { position: relative; inset: auto; width: 100%; aspect-ratio: 16 / 10; }
+  /* la clase .wl-media-m la agrega el onLoad de la imagen móvil (solo si cargó bien):
+     entonces se muestra la móvil y se oculta la de escritorio. Si el archivo no existe,
+     la clase nunca se pone y queda la de escritorio como respaldo. */
+  .wl-media-m .wl-h888__bg--m { display: block; }
+  .wl-media-m .wl-h888__bg--d { display: none; }
   .wl-h888__bg { object-position: 78% center; }
   .wl-h888__scrim { display: none; }
-  .wl-h888__content { position: static; display: block; padding: 16px 16px 4px; background: #0a0a0a; }
+  .wl-h888__content { position: static; display: block; padding: 22px 16px 24px; background: #0a0a0a; }
+  /* slides CLAROS en móvil: imagen ARRIBA + bloque de textos blanco DEBAJO (orden normal). */
+  .wl-h888--light .wl-h888__content { background: #ffffff; padding: 32px 16px 48px; }
   .wl-h888__inner { padding: 0; }
   .wl-h888__text { max-width: 100%; }
-  .wl-h888__title { font-size: clamp(24px, 6.4vw, 28px); }
+  /* reserva 2 líneas → todos los slides quedan igual de altos y la sección siguiente
+     (Top 10) mantiene el mismo espaciado, aunque un título ocupe 1 línea y otro 2. */
+  .wl-h888__title { font-size: 36px; min-height: 2.1em; }
   .wl-h888__sub { max-width: 100%; }
   .wl-hero888 .splide__arrow { display: none; }
+  /* móvil: bullets SOBRE la imagen (abajo-centro), chiquitos, sin ocupar alto extra.
+     La imagen es 16:10 a lo ancho → su alto = 62.5vw; los bullets van cerca de ese borde. */
+  .wl-hero888 .splide__pagination {
+    position: absolute; top: calc(62.5vw - 26px); bottom: auto; left: 0; right: 0;
+    z-index: 3; padding: 0; margin: 0;
+  }
+  .wl-hero888 .splide__pagination__page { width: 6px; height: 6px; }
+  .wl-hero888 .splide__pagination__page.is-active { width: 18px; }
   /* CTAs al 50/50: uno solo llena el ancho, dos se reparten mitad y mitad */
   .wl-h888__ctas { flex-wrap: nowrap; }
   .wl-h888__ctas .wl-btn { flex: 1 1 0; min-width: 0; justify-content: center; padding-left: 12px; padding-right: 12px; }
@@ -384,9 +433,10 @@ a { color: inherit; text-decoration: none; }
 }
 .wl-ev__meta { display: flex; align-items: center; gap: 6px; min-width: 0; text-shadow: 0 1px 4px rgba(0,0,0,0.85); }
 .wl-ev__ball { font-size: 13px; line-height: 1; flex-shrink: 0; }
-.wl-ev__date { color: #fff; font-weight: 600; white-space: nowrap; }
-.wl-ev__liga { width: 15px; height: 15px; object-fit: contain; flex-shrink: 0; }
-.wl-ev__ligatxt { color: #eaeaea; white-space: nowrap; }
+.wl-ev__date { color: #fff; font-weight: 600; white-space: nowrap; flex-shrink: 0; }
+.wl-ev__sep { color: #c4c4c4; flex-shrink: 0; }
+/* nombre de la liga: se trunca (ellipsis) si el texto es largo, no empuja al ícono derecho */
+.wl-ev__ligatxt { color: #eaeaea; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
 .wl-ev__stats { color: #eaeaea; flex-shrink: 0; filter: drop-shadow(0 1px 2px rgba(0,0,0,0.8)); }
 .wl-ev__info { position: absolute; left: 0; right: 0; bottom: 0; z-index: 2; padding: 14px; display: flex; flex-direction: column; gap: 9px; }
 .wl-ev__teams { font-size: 16px; font-weight: 800; color: #fff; text-shadow: 0 1px 5px rgba(0,0,0,0.95); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -503,7 +553,7 @@ a { color: inherit; text-decoration: none; }
   border-radius: var(--wl-radius-l);
   border: 1px solid rgba(255,255,255,0.09);
   background:
-    linear-gradient(180deg, rgba(9,8,7,0.72) 0%, rgba(7,6,6,0.86) 100%),
+    linear-gradient(180deg, rgba(9,8,7,0.48) 0%, rgba(7,6,6,0.62) 100%),
     url('/assets/img/bg-home-casino.jpg') center center / cover no-repeat;
   display: grid; grid-template-columns: 1fr; gap: 18px;
   padding: 26px 22px;
@@ -513,7 +563,7 @@ a { color: inherit; text-decoration: none; }
 }
 .wl-picker__left .wl-kicker { margin-bottom: 8px; }
 .wl-picker__left .wl-h2 { margin: 0 0 16px; }
-.wl-picker__left .wl-sub { margin: 0 0 40px; }
+.wl-picker__left .wl-sub { margin: 0 0 40px; color: #fff; }
 .wl-picker__result {
   display: inline-flex; align-items: center; gap: 12px;
   background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.12);
@@ -582,10 +632,13 @@ a { color: inherit; text-decoration: none; }
 
 /* ---------- S3 CASINO (cards clmc reales + glow) ---------- */
 .wl-row-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; margin: 0 0 40px; }
-.wl-deportes { padding-top: 118px; padding-bottom: 128px; }
-.wl-live-section { padding-top: 104px; padding-bottom: 120px; }
-.wl-picker { padding-top: 92px; padding-bottom: 92px; }
-#promos { padding-top: 92px; padding-bottom: 92px; }
+/* RITMO vertical (escritorio): base 100/100; solo se recortan a 72 los cantos pedidos
+   (Top 10 arriba/abajo, Deportes arriba y Ruleta de juegos abajo). Deportes conserva 100
+   abajo para que el piso cubra la portería. Mobile no se toca. */
+.wl-deportes { padding-top: 60px; padding-bottom: 100px; }
+.wl-live-section { padding-top: 100px; padding-bottom: 100px; }
+.wl-picker { padding-top: 100px; padding-bottom: 72px; }
+#promos { padding-top: 60px; padding-bottom: 100px; }
 .wl-row-head h3 { min-width: 0; }
 .wl-see-all { white-space: nowrap; flex-shrink: 0; }
 .wl-row-head h3 { display: flex; align-items: center; gap: 10px; font-size: var(--clmc-text-large, 24px); font-weight: 800; margin: 0; }
@@ -789,34 +842,59 @@ a { color: inherit; text-decoration: none; }
 /* globito bonito que señala al juguete (posición por JS = centro del juguete) */
 .wl-toy-hint {
   position: absolute; z-index: 5; pointer-events: none; white-space: nowrap;
-  background: #fff; color: #14100c; font-weight: 500; font-size: 13px; letter-spacing: 0.01em;
-  border-radius: 999px; padding: 7px 15px; box-shadow: 0 12px 28px rgba(0,0,0,0.42);
+  display: inline-flex; align-items: center; gap: 7px;
+  background: linear-gradient(180deg, #ffffff 0%, #f2f1f0 100%);
+  color: #1a1410; font-weight: 600; font-size: 13px; letter-spacing: 0.01em;
+  border: 1px solid rgba(20,16,12,0.07);
+  border-radius: 999px; padding: 8px 15px 8px 13px;
+  box-shadow: 0 8px 22px rgba(0,0,0,0.22), 0 2px 5px rgba(0,0,0,0.12);
+  transform: translateY(-50%);
 }
+/* puntito naranja de acento (marca) al inicio del globito */
+.wl-toy-hint::before {
+  content: ""; flex: 0 0 auto; width: 7px; height: 7px; border-radius: 50%;
+  background: var(--wl-orange, #e85b10); box-shadow: 0 0 0 3px rgba(232,91,16,0.16);
+}
+/* globito SIEMPRE a la IZQUIERDA del juguete → cola a la DERECHA, apuntándolo */
 .wl-toy-hint::after {
-  content: ""; position: absolute; left: 50%; margin-left: -6px;
-  width: 12px; height: 12px; background: #fff; transform: rotate(45deg);
+  content: ""; position: absolute; top: 50%; margin-top: -5px; right: -4px;
+  width: 11px; height: 11px; background: #f2f1f0; transform: rotate(45deg);
+  border-top: 1px solid rgba(20,16,12,0.07); border-right: 1px solid rgba(20,16,12,0.07);
 }
-/* balón ahora está ARRIBA → el globito va DEBAJO (cola hacia arriba) para no cortarse */
-.wl-toy-zone--ball .wl-toy-hint { animation: wl-hint-chip 1.7s ease-in-out infinite, wl-hint-fade 6.5s ease forwards; }
-.wl-toy-zone--ball .wl-toy-hint::after { top: -5px; }
-.wl-toy-zone--chip .wl-toy-hint { animation: wl-hint-chip 1.7s ease-in-out infinite, wl-hint-fade 6.5s ease forwards; }
-.wl-toy-zone--chip .wl-toy-hint::after { top: -5px; box-shadow: -3px -3px 6px rgba(0,0,0,0.06); }
-@keyframes wl-hint-ball { 0%, 100% { transform: translate(-50%, calc(-100% - 42px)); } 50% { transform: translate(-50%, calc(-100% - 49px)); } }
-@keyframes wl-hint-chip { 0%, 100% { transform: translate(-50%, 42px); } 50% { transform: translate(-50%, 49px); } }
-@keyframes wl-hint-fade { 0%, 82% { opacity: 0.98; } 100% { opacity: 0; } }
+/* se mantiene visible (bob suave) HASTA la 1a interacción; luego desaparece */
+.wl-toy-zone--ball:not(.wl-toy-zone--played) .wl-toy-hint,
+.wl-toy-zone--chip:not(.wl-toy-zone--played) .wl-toy-hint { animation: wl-hint-side 1.7s ease-in-out infinite; }
+@keyframes wl-hint-side { 0%, 100% { transform: translate(0, -50%); } 50% { transform: translate(-4px, -50%); } }
 .wl-toy-zone--played .wl-toy-hint { opacity: 0 !important; animation: none; }
 @media (prefers-reduced-motion: reduce) {
-  .wl-toy-zone--ball .wl-toy-hint { animation: wl-hint-fade 6.5s ease forwards; transform: translate(-50%, 42px); }
-  .wl-toy-zone--chip .wl-toy-hint { animation: wl-hint-fade 6.5s ease forwards; transform: translate(-50%, 42px); }
+  .wl-toy-zone--ball .wl-toy-hint, .wl-toy-zone--chip .wl-toy-hint { animation: none; transform: translateY(-50%); }
 }
 @media (max-width: 900px) { .wl-toy-hint { font-size: 12px; padding: 6px 12px; } }
+
+/* BALÓN: siempre rebotando (hasta la 1a patada). Anima la IMAGEN (translateY), no el
+   contenedor que mueve el JS; la sombra queda en el piso → se ve despegar del suelo. */
+@keyframes wl-ball-bounce {
+  0%, 100% { transform: translateY(0) scaleX(1.05) scaleY(0.95); }
+  15% { transform: translateY(-2px) scale(1); }
+  50% { transform: translateY(-13px) scaleX(0.97) scaleY(1.03); }
+  85% { transform: translateY(-2px) scale(1); }
+}
+.wl-toy-zone--ball:not(.wl-toy-zone--played) .wl-toy__art img { animation: wl-ball-bounce 0.9s ease-in-out infinite; transform-origin: center bottom; }
+/* MONEDA: giro rápido → se queda quieta un momento → vuelve a girar (rotateY sobre su eje) */
+.wl-toy--chip .wl-toy__art { perspective: 320px; }
+@keyframes wl-coin-spin {
+  0% { transform: rotateY(0deg); }
+  22% { transform: rotateY(720deg); }
+  100% { transform: rotateY(720deg); }
+}
+.wl-toy-zone--chip:not(.wl-toy-zone--played) .wl-toy__art img { animation: wl-coin-spin 3.4s cubic-bezier(0.45, 0, 0.15, 1) infinite; }
 
 
 /* ---------- CASINO · TOP 10 (fondo de marca, no negro) ---------- */
 .wl-top10 { position: relative; }
 .wl-top10__bg { position: absolute; inset: 0; z-index: 0; pointer-events: none; background: #000; }
 .wl-top10 > * { position: relative; z-index: 1; }
-.wl-top10 { padding-bottom: 78px; }
+.wl-top10 { padding-top: 72px; padding-bottom: 72px; }
 /* el track recorta en vertical (overflow:hidden) y cortaba los números de ranking
    que cuelgan del card → padding-bottom para darles aire sin romper el carrusel */
 .wl-top10__slider .splide__track { padding-bottom: 30px; }
@@ -878,10 +956,10 @@ a { color: inherit; text-decoration: none; }
 
 /* ---------- TRAGAMONEDAS: carrusel horizontal AUTO-PLAY (scroll libre) ---------- */
 .wl-slotgal {
-  position: relative; padding: 132px 0 120px; overflow: hidden;
+  position: relative; padding: 100px 0 100px; overflow: hidden;
   background:
-    radial-gradient(120% 90% at 100% 0%, rgba(232,91,16,0.06), transparent 60%),
-    #f4f1ec;
+    radial-gradient(120% 90% at 100% 0%, rgba(232,91,16,0.05), transparent 60%),
+    #ffffff;
 }
 .wl-slotgal__head {
   position: relative; z-index: 1;
@@ -975,13 +1053,6 @@ a { color: inherit; text-decoration: none; }
 .wl-promo-card:hover { transform: translateY(-6px); box-shadow: 0 22px 46px rgba(0,0,0,0.5); }
 .wl-promo-card img { display: block; width: 100%; aspect-ratio: 2007 / 1054; object-fit: cover; }
 
-/* ---------- SEO block ---------- */
-.wl-seo { border-top: 1px solid rgba(255,255,255,0.08); }
-.wl-seo h2 { font-size: var(--clmc-text-large, 24px); font-weight: 800; margin: 0 0 6px; }
-.wl-seo h3 { font-size: var(--clmc-text-medium, 16px); font-weight: 800; margin: 22px 0 6px; color: var(--wl-orange-soft); }
-.wl-seo p { color: #c9c9c9; font-size: var(--clmc-text-small, 14px); line-height: 1.65; margin: 0 0 10px; max-width: 860px; }
-.wl-seo a { color: var(--wl-orange-soft); text-decoration: underline; }
-
 /* ---------- CTA sticky móvil ---------- */
 .wl-sticky-cta {
   position: fixed; left: 12px; right: 12px; bottom: 74px; z-index: 1090;
@@ -1028,7 +1099,7 @@ a { color: inherit; text-decoration: none; }
 @media (max-width: 899px) {
   /* cabeceras de sección: apiladas a la izquierda, con AIRE título→texto→CTA */
   .wl-row-head, .wl-top10__head, .wl-slotgal__head {
-    flex-direction: column; align-items: flex-start; gap: 16px;
+    flex-direction: column; align-items: flex-start; gap: 24px;
   }
   /* los subs traen margin inline (6px) → se sube con !important */
   .wl-row-head .wl-sub, .wl-top10__head .wl-sub, .wl-slotgal__head .wl-sub { margin-top: 16px !important; }
@@ -1056,9 +1127,9 @@ a { color: inherit; text-decoration: none; }
   /* RITMO 40px entre bloques (40 abajo + 40 arriba) */
   .wl-hero888 { padding-bottom: 24px; }
   .wl-top10 { padding-top: 40px; padding-bottom: 40px; }
-  .wl-deportes { padding-top: 40px; padding-bottom: 40px; }
+  .wl-deportes { padding-top: 32px; padding-bottom: 40px; }
   .wl-live-section { padding-top: 40px; padding-bottom: 40px; }
-  .wl-slotgal { padding: 132px 0 88px; } /* top amplio para la ficha + su globito; abajo con aire parejo */
+  .wl-slotgal { padding: 88px 0 88px; } /* globito ahora va al lado → menos top; abajo con aire parejo */
   .wl-picker { padding-top: 40px; padding-bottom: 40px; }
   #promos { padding-top: 40px; padding-bottom: 36px; }
 }
@@ -1126,3 +1197,139 @@ a { color: inherit; text-decoration: none; }
     box-sizing: content-box;
   }
 }
+
+/* =====================================================================
+   PROPUESTA (/propuesta): menú con desplegables, menú lateral en celular
+   y logos del footer a color. No afecta al home original ("/").
+   ===================================================================== */
+
+/* ---- Header: desplegables de Deportes y Casino ----
+   Tarjeta clara sobre el header naranja. Uno solo abierto a la vez (clase .is-open,
+   la controla Chrome.jsx). El panel se alinea a la izquierda de SU enlace para no
+   invadir al de al lado, y el "puente" que conserva el hover mide lo mismo que el enlace. */
+.wl-dd { position: relative; }
+.wl-dd::after { content: ""; position: absolute; left: 0; right: 0; top: 100%; height: 16px; }
+.wl-dd__trigger { display: inline-flex !important; align-items: center; gap: 7px; line-height: 1; }
+.wl-dd__chev { display: block; flex-shrink: 0; margin-top: 2px; transition: transform 0.22s ease; }
+.wl-dd.is-open .wl-dd__chev { transform: rotate(180deg); }
+.wl-dd__panel {
+  position: absolute; top: calc(100% + 14px); left: -10px; z-index: 1300;
+  width: 236px; padding: 6px;
+  background: #fff; border-radius: 14px;
+  box-shadow: 0 20px 44px rgba(26, 10, 0, 0.28), 0 2px 8px rgba(26, 10, 0, 0.12);
+  opacity: 0; visibility: hidden; transform: translateY(6px) scale(0.98); transform-origin: 24px 0;
+  transition: opacity 0.16s ease, transform 0.18s ease, visibility 0s linear 0.18s;
+}
+/* flechita que apunta a su opción del menú */
+.wl-dd__panel::before {
+  content: ""; position: absolute; top: -6px; left: 26px; width: 12px; height: 12px;
+  background: #fff; border-radius: 2px; transform: rotate(45deg);
+}
+.wl-dd.is-open .wl-dd__panel {
+  opacity: 1; visibility: visible; transform: none;
+  transition: opacity 0.16s ease, transform 0.18s ease, visibility 0s;
+}
+.wl-dd__list { position: relative; display: flex; flex-direction: column; gap: 2px; }
+.wl-dd__item {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  padding: 11px 12px; border-radius: 10px;
+  color: #1c1c1c !important; text-decoration: none; font-size: 14px; font-weight: 600; white-space: nowrap;
+  transition: background 0.15s, color 0.15s;
+}
+.wl-dd__go { flex-shrink: 0; opacity: 0; transform: translateX(-4px); transition: opacity 0.15s, transform 0.15s; }
+.wl-dd__item:hover, .wl-dd__item:focus-visible { background: #fff1e8; color: #e85b11 !important; outline: none; }
+.wl-dd__item:hover .wl-dd__go, .wl-dd__item:focus-visible .wl-dd__go { opacity: 1; transform: none; }
+.wl-dd__all {
+  display: flex; align-items: center; gap: 8px; margin-top: 6px; padding: 12px 12px 8px;
+  border-top: 1px solid #f0ebe7;
+  color: #e85b11 !important; text-decoration: none; font-size: 13px; font-weight: 700;
+}
+.wl-dd__all .wl-dd__go { opacity: 1; transform: none; }
+.wl-dd__all:hover { text-decoration: underline; }
+
+/* ---- Menú lateral (celular) ----
+   Medidas iguales al menú lateral actual del sitio (medido en producción a 390 px):
+   panel 320 px, banner 288x107 a 78 px del borde superior, opciones de 34 px con 14 px
+   entre ellas, divisorias de 1 px (blanco 8 %) con 14 px de aire y subopciones de 46 px
+   con 6 px entre ellas, a 18 px de sangría. */
+.wl-drawer { position: fixed; inset: 0; z-index: 2000; pointer-events: none; }
+.wl-drawer.is-open { pointer-events: auto; }
+.wl-drawer__overlay {
+  position: absolute; inset: 0; background: rgba(0,0,0,0.45);
+  backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+  opacity: 0; transition: opacity 0.25s ease;
+}
+.wl-drawer.is-open .wl-drawer__overlay { opacity: 1; }
+.wl-drawer__panel {
+  position: absolute; top: 0; bottom: 0; left: 0; width: min(320px, 86vw);
+  display: flex; flex-direction: column; overflow-y: auto;
+  padding: 78px 16px calc(16px + env(safe-area-inset-bottom));
+  background: #050505; color: #fff;
+  transform: translateX(-100%); transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.wl-drawer.is-open .wl-drawer__panel { transform: none; }
+.wl-drawer__close {
+  position: absolute; top: 22px; right: 16px; width: 34px; height: 34px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(255,255,255,0.08); color: #fff; border: 0; cursor: pointer;
+}
+.wl-drawer__banner { display: block; }
+.wl-drawer__banner img { display: block; width: 100%; height: auto; aspect-ratio: 1080 / 400; object-fit: cover; border-radius: 8px; }
+.wl-drawer__nav { margin: 23px 0 16px; }
+.wl-drawer__sec + .wl-drawer__sec { margin-top: 14px; padding-top: 14px; border-top: 1px solid rgba(255,255,255,0.08); }
+.wl-drawer__row {
+  display: flex; align-items: center; gap: 13px; width: 100%; height: 34px; padding: 0 0 0 4px;
+  background: none; border: 0; color: #fff; text-align: left; text-decoration: none; cursor: pointer;
+  font-size: 14px; font-weight: 700;
+}
+.wl-drawer__sec--links .wl-drawer__row + .wl-drawer__row { margin-top: 14px; }
+.wl-drawer__ic { width: 20px; height: 20px; flex-shrink: 0; }
+.wl-drawer__chev { margin-left: auto; margin-right: 6px; color: rgba(255,255,255,0.85); transition: transform 0.2s ease; }
+.wl-drawer__chev.is-open { transform: rotate(180deg); }
+.wl-drawer__sub { overflow: hidden; max-height: 0; transition: max-height 0.3s ease, padding-top 0.3s ease; }
+.wl-drawer__sub.is-open { max-height: 460px; padding-top: 10px; }
+.wl-drawer__subrow {
+  display: flex; align-items: center; gap: 12px; height: 46px; margin-left: 18px; padding-left: 10px;
+  color: rgba(255,255,255,0.7); text-decoration: none; font-size: 14px; font-weight: 400;
+}
+.wl-drawer__subrow + .wl-drawer__subrow { margin-top: 6px; }
+.wl-drawer__subrow--all { color: #E85B11; font-weight: 700; }
+.wl-drawer__agent {
+  margin-top: auto; display: flex; align-items: center; gap: 12px; min-height: 65px;
+  padding: 10px 16px 10px 10px; border-radius: 8px; background: #212121; color: #fff; text-decoration: none;
+}
+.wl-drawer__avatar {
+  position: relative; flex-shrink: 0; width: 44px; height: 44px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center; background: #E85B11; color: #fff;
+}
+.wl-drawer__avatar svg { width: 22px; height: 22px; }
+.wl-drawer__avatar i { position: absolute; right: -1px; bottom: -1px; width: 12px; height: 12px; border-radius: 50%; background: #2bb35a; border: 2px solid #212121; }
+.wl-drawer__agenttxt { display: flex; flex-direction: column; flex: 1; }
+.wl-drawer__agenttxt b { font-size: 15px; font-weight: 600; }
+.wl-drawer__agenttxt span { font-size: 13px; color: #bdbdbd; }
+
+/* ---- Footer: logos a color ---- */
+.wl-footer-p img.clmc-footer-logos { object-fit: contain; filter: none !important; opacity: 1 !important; }
+/* Logos del footer (propuesta): las dos opciones con el MISMO tamaño (104 x 44) y la
+   misma separación (20 px); solo cambia el estilo: pastilla blanca o directo sobre negro. */
+.wl-footer-p div.clmc-footer-logos .MuiBox-root .MuiBox-root { gap: 20px !important; }
+.wl-footer-p img.clmc-footer-logos {
+  box-sizing: content-box; width: 80px !important; height: 28px !important;
+  padding: 8px 12px; border-radius: 10px;
+}
+.wl-footer-p--chip img.clmc-footer-logos {
+  background: linear-gradient(180deg, #ffffff 0%, #f3f3f3 100%);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.9), 0 4px 12px rgba(0,0,0,0.4);
+}
+
+/* ---- Selector de la opción de logos (solo en la propuesta) ---- */
+.wl-logotoggle {
+  display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 8px;
+  padding: 18px 16px; background: #000; border-top: 1px solid #1a1a1a;
+}
+.wl-logotoggle__lbl { margin-right: 4px; font-size: 12px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #8a8a8a; }
+.wl-logotoggle button {
+  padding: 8px 14px; border-radius: 999px; border: 1px solid #444; background: transparent;
+  color: #ddd; font-size: 13px; font-weight: 600; cursor: pointer;
+}
+.wl-logotoggle button[aria-pressed="true"] { background: #E85B11; border-color: #E85B11; color: #fff; }

@@ -1,7 +1,6 @@
 // Bloque interactivo "Gíralo y te elegimos un juego" (ref. Versusbet):
 // ruleta coverflow de juegos REALES con marco central; el usuario gira y aterriza
-// en un juego destacado. Engagement + dwell time (apoya SEO) y los nombres de los
-// juegos son texto indexable.
+// en un juego destacado.
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { lobbies, thumb } from '../lib/data';
 import { useInView, useReducedMotion } from '../lib/hooks';
