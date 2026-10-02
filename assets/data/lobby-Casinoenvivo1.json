@@ -1,0 +1,130 @@
+{
+   "type": "lobby",
+   "company": "WLM",
+   "event": "lobby",
+   "ip": "201.121.5.197",
+   "result": "OK",
+   "lobby": [
+      {
+         "machine": 5012902,
+         "name": "Diamond Roulette",
+         "web_name": "Diamond Roulette",
+         "provider": "evolution",
+         "sub_provider": "EVOLUTION_EZUGI",
+         "external_id": "ez_221003_000000",
+         "type": "Live",
+         "tags": "LIVE,Roulette",
+         "lobby_tag": null,
+         "logo": "/cms/img/logos/evolution/5012902/diamond_roulette_animated_thumbnail_500x500_2026_04.svg",
+         "background": "",
+         "rtp": null,
+         "description": "",
+         "demo_allowed": false,
+         "regulation_code": ""
+      },
+      {
+         "machine": 5012145,
+         "name": "Always 8 Baccarat",
+         "web_name": "Always 8 Baccarat",
+         "provider": "evolution",
+         "sub_provider": "evolution",
+         "external_id": "Always8baccarat0",
+         "type": "Live",
+         "tags": "Baccarat,LIVE",
+         "lobby_tag": null,
+         "logo": "/cms/img/logos/evolution/5012145/always_8_baccarat_thumbnail_1080x1080_2024_09_03.png",
+         "background": "",
+         "rtp": null,
+         "description": "",
+         "demo_allowed": false,
+         "regulation_code": ""
+      },
+      {
+         "machine": 5011880,
+         "name": "Craps",
+         "web_name": "Craps",
+         "provider": "evolution",
+         "sub_provider": "evolution",
+         "external_id": "Craps00000000001",
+         "type": "Live",
+         "tags": "Dice,LIVE",
+         "lobby_tag": null,
+         "logo": "/cms/img/logos/evolution/5011880/craps_thumbnail_1080x1080_2020_09_03.png",
+         "background": "",
+         "rtp": null,
+         "description": "",
+         "demo_allowed": false,
+         "regulation_code": ""
+      },
+      {
+         "machine": 5011816,
+         "name": "Baccarat Control Squeeze",
+         "web_name": "Baccarat Control Squeeze",
+         "provider": "evolution",
+         "sub_provider": "evolution",
+         "external_id": "k2oswnib7jjaaznw",
+         "type": "Live",
+         "tags": "Baccarat,LIVE",
+         "lobby_tag": null,
+         "logo": "/cms/img/logos/evolution/5011816/baccarat_control_squeeze_thumbnail_1080x1080_2023_04_03.png",
+         "background": "",
+         "rtp": null,
+         "description": "",
+         "demo_allowed": false,
+         "regulation_code": ""
+      },
+      {
+         "machine": 5012916,
+         "name": "Andar Bahar",
+         "web_name": "Andar Bahar",
+         "provider": "evolution",
+         "sub_provider": "EVOLUTION_EZUGI",
+         "external_id": "ez_228000_000000",
+         "type": "Live",
+         "tags": "LIVE",
+         "lobby_tag": null,
+         "logo": "/cms/img/logos/evolution/5012916/andar_bahar_thumbnail_1080x1080_2023_09 (1).png",
+         "background": "",
+         "rtp": null,
+         "description": "",
+         "demo_allowed": false,
+         "regulation_code": ""
+      }
+   ],
+   "lobby_name": "Top 5",
+   "providers": [
+      {
+         "provider": "EVOLUTION_EZUGI",
+         "name": "Ezugi"
+      },
+      {
+         "provider": "evolution",
+         "name": "Evolution"
+      }
+   ],
+   "tags_collection": [
+      {
+         "tag": "LIVE",
+         "name": "LIVE"
+      },
+      {
+         "tag": "Roulette",
+         "name": "Roulette"
+      },
+      {
+         "tag": "Baccarat",
+         "name": "Baccarat"
+      },
+      {
+         "tag": "Dice",
+         "name": "Dice"
+      }
+   ],
+   "tags": [
+      "LIVE",
+      "Roulette",
+      "Baccarat",
+      "Dice"
+   ],
+   "total_machines": 5
+}
